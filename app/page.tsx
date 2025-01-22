@@ -8,7 +8,7 @@ export default function Home() {
   return (
 <main> 
   <Header />
-  <Spacing size='xl' />
+  <Spacing size='md' />
   <Hero />
   <Spacing size='xl' />
 </main>
