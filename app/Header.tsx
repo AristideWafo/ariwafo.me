@@ -11,7 +11,7 @@ export const Header = () => {
   return (
     <header>
         <Section className='flex items-baseline py-4'>
-            <h1 className="text-xl font-bold text-foreground ">ariwafo.me</h1>
+            <h1 className="text-xl  text-foreground font-bold font-mono ">ariwafo.me</h1>
             <div className="flex-1"></div>
             <ul className='flex gap-2'>
                 <Link href="https://www.linkedin.com/in/aristidewafo/" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
