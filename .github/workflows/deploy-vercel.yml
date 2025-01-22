@@ -21,9 +21,16 @@ jobs:
       with:
         node-version: '18'  # Assure-toi d'utiliser la version compatible avec ton projet Next.js
 
+    - name: Cache npm dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm  # Chemin du cache npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: ${{ runner.os }}-npm-
+  
     - name: Install Dependencies
-      run: npm install
-
+      run: npm ci  # Utiliser 'npm ci' pour une installation propre et rapide
+  
     - name: Build Next.js app
       run: npm run build
 
