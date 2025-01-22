@@ -26,7 +26,7 @@ export const Hero = () => {
         <div className="flex-[1] flex-col justify-center space-y-4 max-w-2xl h-full">
             <h1 className="text-5xl py-3 font-bold text-foreground text-wrap"> Software Eng. and Community Builder... </h1>
             <p className="text-md text-left  text-slate-600">
-            👋🏾 Hi, I’m <span className='text-foreground text-xl font-bold' > Aristide WAFO,</span> a software developer and a Master's student (M2) at UTT 🇫🇷.
+            👋🏾 Hi, I&apos;m <span className='text-foreground text-xl font-bold' > Aristide WAFO,</span> a software developer and a Master&apos;s student (M2) at UTT 🇫🇷.
             </p>
             <p className="text-md text-left text-slate-600">
             Passionate about innovative technologies, I work on diverse projects using 
