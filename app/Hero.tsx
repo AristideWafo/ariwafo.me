@@ -1,9 +1,7 @@
 import React, { ComponentPropsWithoutRef } from 'react'
 import { Section } from './_components/Section'
-import { Spacing } from './_components/Spacing'
-import exp from 'constants'
+
 import { cn } from '@/lib/utils'
-import { LinkedinIcon } from './icons/LinkedinIcon'
 import { SpringIcon } from './icons/SpringIcon'
 import { AngularIcon } from './icons/AngularIcon'
 import { AwsIcon } from './icons/AwsIcon'
