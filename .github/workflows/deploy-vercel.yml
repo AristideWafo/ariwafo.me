@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'  # Assure-toi d'utiliser la version compatible avec ton projet Next.js
+        cache: 'npm'  # Active le cache natif pour npm
 
     - name: Cache npm dependencies
       uses: actions/cache@v4
