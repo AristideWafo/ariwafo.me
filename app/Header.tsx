@@ -17,10 +17,10 @@ export const Header = () => {
                 <Link href="https://www.linkedin.com/in/aristidewafo/" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
                     <LinkedinIcon size={12} className='text-foreground' />
                 </Link>
-                <Link href="https://www.linkedin.com/in/aristidewafo/" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
+                <Link href="https://github.com/AristideWafo" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
                     <GithubIcon size={12} className='text-foreground' />
                 </Link>
-                <Link href="https://www.linkedin.com/in/aristidewafo/" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
+                <Link href="https://x.com/JerryWafo/" className={cn(buttonVariants({variant:"outline"}), "size-7 p-0")} >
                     <XIcon size={12} className='text-foreground' />
                 </Link>
 
