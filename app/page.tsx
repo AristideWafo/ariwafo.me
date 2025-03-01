@@ -11,7 +11,7 @@ export default function Home() {
   <Header />
   <Spacing size='lg' />
   <Hero />
-  <Spacing size='xl' />
+  <Spacing size='2xl' />
   <Slide />
 </main>
   );
