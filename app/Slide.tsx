@@ -33,7 +33,7 @@ export const Slide = () => {
 
   return (
     <>
-      <Section className="flex justify-center items-baseline py-4 h-auto">
+      <Section className="flex justify-center items-baseline h-auto">
         <InfiniteCarousel carouselItems={carouselItems} title="My areas of expertise"/>
       </Section>
     </>

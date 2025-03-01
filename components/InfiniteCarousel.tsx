@@ -44,14 +44,14 @@ export const InfiniteCarousel = ({
   }
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-background to-secondary/20 py-12">
+    <div className="relative overflow-hidden bg-gradient-to-b from-background to-secondary/20">
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_50%,rgba(120,120,120,0.05),transparent_50%)]"></div>
 
-      <Section className="relative z-10">
+      <Section className="relative z-10 px-0">
         {title || description ? (
-          <div className="mb-10 text-center">
+          <div className="text-left">
             {title && (
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+              <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
                 {title}
               </h2>
             )}
@@ -77,7 +77,7 @@ export const InfiniteCarousel = ({
               >
                 <div className="group relative">
                   <Card className="overflow-hidden border-none bg-transparent shadow-none transition-all">
-                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                    <CardContent className="flex aspect-square items-center justify-start md:justify-center p-0">
                       <div className="relative h-20 w-20 transition-all duration-300 ease-in-out group-hover:scale-110">
                         <Image
                           src={item.link}
