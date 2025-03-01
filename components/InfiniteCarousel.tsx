@@ -77,7 +77,7 @@ export const InfiniteCarousel = ({
               >
                 <div className="group relative">
                   <Card className="overflow-hidden border-none bg-transparent shadow-none transition-all">
-                    <CardContent className="flex aspect-square items-center justify-start md:justify-center p-0">
+                    <CardContent className="flex aspect-square items-center justify-center p-0">
                       <div className="relative h-20 w-20 transition-all duration-300 ease-in-out group-hover:scale-110">
                         <Image
                           src={item.link}
