@@ -1,14 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
-module.exports = {
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'upload.wikimedia.org', // Ajoute tous les domaines nécessaires
+        hostname: 'media.licdn.com',
       },
       {
         protocol: 'https',
