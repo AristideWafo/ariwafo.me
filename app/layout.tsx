@@ -4,13 +4,12 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { cn } from "../lib/utils";
-
+import { cn } from "../src/lib/utils";
 
 export const metadata: Metadata = {
   title: {
     default: "Portfolio – Cloud & DevOps Engineer",
-    template: "%s | Portfolio"
+    template: "%s | Portfolio",
   },
   description: "Minimal portfolio (placeholder content).",
   openGraph: {
@@ -19,13 +18,13 @@ export const metadata: Metadata = {
     url: "https://example.com",
     siteName: "Portfolio",
     locale: "en_US",
-    type: "website"
+    type: "website",
   },
   robots: {
     index: true,
-    follow: true
+    follow: true,
   },
-  metadataBase: new URL("https://example.com")
+  metadataBase: new URL("https://example.com"),
 };
 
 export default function RootLayout({

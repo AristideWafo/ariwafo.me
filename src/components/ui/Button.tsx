@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link, { LinkProps } from 'next/link';
-import { cn } from '../../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface BaseProps {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
