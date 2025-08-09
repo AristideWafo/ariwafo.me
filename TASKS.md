@@ -47,7 +47,7 @@ content/cases/
 - [x] Implémenter Hero sans images lourdes, typographie forte, CTA `Link`.
 - [x] Composant `Kpi` pour preuves (valeur + libellé + note).
 - [x] Cartes teasers (Card + Tag).
-- [ ] Section “Derniers contenus” branchée sur placeholders (`src/lib/content`). (actuellement statique)
+- [x] Section “Derniers contenus” branchée sur placeholders (`src/lib/content`).
 - [x] SEO spécifique : title, description, OG, canonical.
 - [ ] Tests manuels : responsive, tab order, landmarks, contrastes.
 - [ ] Déployer preview, coller l’URL en commentaire PR.
@@ -73,7 +73,7 @@ content/cases/
 - [ ] CTA vers Études de cas.
 
 ### Tâches
-- [ ] `src/app/(site)/a-propos/page.tsx`.
+- [ ] `app/(site)/a-propos/page.tsx`.
 - [ ] Grille 1–2 colonnes, lecture confortable (Prose).
 - [ ] BreadCrumbs.
 - [ ] SEO dédié.
@@ -95,7 +95,7 @@ content/cases/
 - [ ] Bandeau confiance (2 témoignages placeholders).
 
 ### Tâches
-- [ ] `src/app/(site)/contact/page.tsx`.
+- [ ] `app/(site)/contact/page.tsx`.
 - [ ] Formulaire accessible (labels, `aria-invalid`, messages d’erreur).
 - [ ] Server Action envoyant vers placeholder (console).
 - [ ] Anti-spam (honeypot, délai).

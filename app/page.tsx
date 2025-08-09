@@ -10,6 +10,8 @@ import { Section } from '@/components/ui/Section';
 import { Kpi } from '@/components/ui/Kpi';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
+import { getLatestArticle } from '@/lib/content/articles/data';
+import { getLatestEpisode } from '@/lib/content/podcasts/data';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Home',
@@ -25,10 +27,8 @@ const kpis = [
 
 const caseTeasers = [1,2,3].map(i => ({ id: i, title: `Case Study ${i} (placeholder)`, tag: 'Cloud', excerpt: 'Short placeholder summary of impact.' }));
 
-const latestContent = {
-  article: { title: 'Article placeholder title', href: '/articles', tag: 'DevOps' },
-  podcast: { title: 'Podcast episode placeholder', href: '/podcast', tag: 'Podcast' }
-};
+const latestArticle = getLatestArticle();
+const latestEpisode = getLatestEpisode();
 
 export default function HomePage() {
   return (
@@ -60,14 +60,14 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold tracking-tight">Latest Content (placeholder)</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="p-4 space-y-2">
-              <Tag>{latestContent.article.tag}</Tag>
-              <h3 className="font-medium">{latestContent.article.title}</h3>
-              <p className="text-sm text-muted-foreground">Placeholder article excerpt.</p>
+              <Tag>{latestArticle?.tags[0] || 'Article'}</Tag>
+              <h3 className="font-medium">{latestArticle?.title}</h3>
+              <p className="text-sm text-muted-foreground">{latestArticle?.description}</p>
             </Card>
             <Card className="p-4 space-y-2">
-              <Tag>{latestContent.podcast.tag}</Tag>
-              <h3 className="font-medium">{latestContent.podcast.title}</h3>
-              <p className="text-sm text-muted-foreground">Placeholder episode summary.</p>
+              <Tag>Podcast</Tag>
+              <h3 className="font-medium">{latestEpisode?.title}</h3>
+              <p className="text-sm text-muted-foreground">{latestEpisode?.summary}</p>
             </Card>
           </div>
         </div>
