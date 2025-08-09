@@ -1,16 +1,13 @@
 "use client";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
+
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { cn } from "@/lib/utils";
-import { Section } from "@/app/_components/Section";
+import { Section } from "../app/_components/Section";
+import { cn } from "../lib/utils";
+import { Card, CardContent } from "./ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
 interface CarouselItem {
   id: number;

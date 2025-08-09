@@ -1,20 +1,19 @@
-import React, { ComponentPropsWithoutRef } from "react";
+// import React, { ComponentPropsWithoutRef } from "react";
 import { Section } from "./_components/Section";
+// import { cn } from "../lib/utils";
 
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 
-const Code = ({ className, ...props }: ComponentPropsWithoutRef<"span">) => {
-  return (
-    <span
-      className={cn(
-        "text-primary text-sm p-1  mx-1 bg-accent/30 font-mono border border-accent rounded-sm border-primary-background ",
-        className
-      )}
-      {...props}
-    />
-  );
-};
+// const Code = ({ className, ...props }: ComponentPropsWithoutRef<"span">) => {
+//   return (
+//     <span
+//       className={cn(
+//         "text-primary text-sm p-1  mx-1 bg-accent/30 font-mono border border-accent rounded-sm border-primary-background ",
+//         className
+//       )}
+//       {...props}
+//     />
+//   );
+// };
 
 export const Hero = () => {
   return (
@@ -22,7 +21,7 @@ export const Hero = () => {
       <div className="flex-[1] flex-col justify-center space-y-4 max-w-2xl h-full">
         <h1 className="text-5xl py-3 font-bold text-foreground text-wrap">
           {" "}
-          Software Engineer and Community Builder...{" "}
+          Cloud Engineer and Community Builder...{" "}
         </h1>
         <p className="text-md text-left  text-slate-600">
           👋🏾 Hi, I&apos;m{" "}
@@ -30,21 +29,21 @@ export const Hero = () => {
             {" "}
             Aristide WAFO,
           </span>{" "}
-          a Software developer{" "}
-          <Link href={"https://www.astree-software.fr/"}>
+          a Cloud Engineer{" "}
+          {/* <Link href={"https://www.astree-software.fr/"}>
             {" "}
             <Code className="inline-flex items-center gap-2 font-bold">
               {" "}
               @Astree Software.
             </Code>
-          </Link>
+          </Link> */}
         </p>
         <p className="text-md text-left text-slate-600">
-          I thrive in collaborative tech communities like MeetCode and Réussir
-          Sa Carrière, where I mentor, learn, and grow with fellow developers.
+          I thrive in collaborative environments where teamwork and innovation come first.
+          <br />
         </p>{" "}
         <p className="text-md text-left text-slate-600">
-        For me, coding is about teamwork and innovation—sharing knowledge, tackling challenges, and building together.
+        For me, cloud and DevOps is about connecting people and technology — sharing knowledge, solving problems, and growing together.
         </p>{" "}
         <p className="text-md text-left text-slate-800">
         Let’s connect and create something impactful! 🚀

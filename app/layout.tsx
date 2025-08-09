@@ -2,12 +2,30 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
-import { cn } from "@/lib/utils";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { cn } from "../lib/utils";
 
 
 export const metadata: Metadata = {
-  title: "Aristide WAFO | Software Engineer",
-  description: "Welcome to my portfolio. I'm a passionate software engineer and System design specializing in modern web development technologies such as SpringbBoot, Next.js, and AWS.",
+  title: {
+    default: "Portfolio – Cloud & DevOps Engineer",
+    template: "%s | Portfolio"
+  },
+  description: "Minimal portfolio (placeholder content).",
+  openGraph: {
+    title: "Portfolio – Cloud & DevOps Engineer",
+    description: "Minimal portfolio (placeholder content).",
+    url: "https://example.com",
+    siteName: "Portfolio",
+    locale: "en_US",
+    type: "website"
+  },
+  robots: {
+    index: true,
+    follow: true
+  },
+  metadataBase: new URL("https://example.com")
 };
 
 export default function RootLayout({
@@ -16,12 +34,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        // className={`${GeistSans.variable} ${GeistMono.variable}`}
-        className={cn( GeistSans.variable, GeistMono.variable, "bg-background text-foreground font-sans h-full")}
+        className={cn(
+          GeistSans.variable,
+          GeistMono.variable,
+          "bg-background text-foreground font-sans min-h-dvh antialiased"
+        )}
       >
-        {children}
+        <a
+          href="#main"
+          className="absolute left-2 top-2 -translate-y-full focus:translate-y-0 bg-foreground text-background px-3 py-1 text-sm rounded"
+        >
+          Skip to content
+        </a>
+        <Header />
+        <main id="main" role="main" className="relative">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

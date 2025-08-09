@@ -1,11 +1,11 @@
 import React from 'react'
 import { Section } from './_components/Section'
-import {  buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { GithubIcon } from './icons/GithubIcon'
 import { XIcon } from './icons/XIcon'
 import { LinkedinIcon } from './icons/LinkedinIcon'
+import { buttonVariants } from '../components/ui/button'
+import { cn } from '../lib/utils'
 
 export const Header = () => {
   return (
