@@ -1,10 +1,10 @@
-import { cn } from '@/lib/utils'
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from "react";
+import { cn } from "../../src/lib/utils";
 
 export const Section = (props: PropsWithChildren<{ className?: string }>) => {
   return (
     <section className={cn("max-w-4xl m-auto px-4", props.className)}>
-        {props.children}
+      {props.children}
     </section>
-  )
-}
+  );
+};
