@@ -7,11 +7,11 @@ import { PillarsSection } from '@/components/sections/home/PillarsSection';
 import { StackSection } from '@/components/sections/home/StackSection';
 import { ContactCtaSection } from '@/components/sections/home/ContactCtaSection';
 import { Section } from '@/components/ui/Section';
-import { Kpi } from '@/components/ui/Kpi';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { getLatestArticle } from '@/lib/content/articles/data';
 import { getLatestEpisode } from '@/lib/content/podcasts/data';
+import { ProofsSection } from '@/components/sections/home/ProofsSection';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Home',
@@ -20,11 +20,6 @@ export const metadata: Metadata = buildMetadata({
 });
 
 // Placeholder data
-const kpis = [
-  { value: '5+', label: 'Years exp.', note: 'placeholder' },
-  { value: '20+', label: 'Projects', note: 'placeholder' }
-];
-
 const caseTeasers = [1,2,3].map(i => ({ id: i, title: `Case Study ${i} (placeholder)`, tag: 'Cloud', excerpt: 'Short placeholder summary of impact.' }));
 
 const latestArticle = getLatestArticle();
@@ -34,11 +29,7 @@ export default function HomePage() {
   return (
     <main> 
       <HeroSection />
-      <Section>
-        <div className="grid gap-6 md:grid-cols-3">
-          {kpis.map(k => <Kpi key={k.label} value={k.value} label={k.label} note={k.note} />)}
-        </div>
-      </Section>
+      <ProofsSection />
       <PillarsSection />
       <Section>
         <div className="space-y-6">

@@ -41,12 +41,7 @@ export default function RootLayout({
           "bg-background text-foreground font-sans min-h-dvh antialiased"
         )}
       >
-        <a
-          href="#main"
-          className="absolute left-2 top-2 -translate-y-full focus:translate-y-0 bg-foreground text-background px-3 py-1 text-sm rounded"
-        >
-          Skip to content
-        </a>
+
         <Header />
         <main id="main" role="main" className="relative">
           {children}

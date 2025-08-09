@@ -35,7 +35,7 @@ content/cases/
 ## 1) Page Accueil (`/`)
 ### Sections à livrer
 - [x] Hero : Titre, sous-titre, 2 CTA (Contact, Étude de cas).
-- [x] Preuves rapides : Certifs (AWS SAA-C03, Terraform Associate), 1–2 metrics (placeholders), lien cas phare. /* metrics placeholders only (certs & link pending) */
+- [x] Preuves rapides : Certifs (AWS SAA-C03, Terraform Associate), 1–2 metrics (placeholders), lien cas phare.
 - [x] Valeur en 3 piliers : IaC/Terraform, CI/CD, Sécurité/Observabilité.
 - [x] Teaser Études de cas : 2–3 cartes (placeholders).
 - [x] Stack/outillage : liste textuelle sobre (AWS, Terraform, GitHub Actions, Docker, CloudWatch).
@@ -64,19 +64,19 @@ content/cases/
 
 ## 2) Page À propos (`/a-propos`)
 ### Sections
-- [ ] Bio courte et positionnement.
-- [ ] Parcours backend → cloud (paragraphe).
-- [ ] Méthode de travail (IaC-first, CI/CD, tests infra, sécurité by design, métriques).
-- [ ] Compétences & outils (liste).
-- [ ] Certifications (badges textuels + placeholders d’ID).
-- [ ] Mini-FAQ (3–4 questions).
-- [ ] CTA vers Études de cas.
+- [x] Bio courte et positionnement.
+- [x] Parcours backend → cloud (paragraphe).
+- [x] Méthode de travail (IaC-first, CI/CD, tests infra, sécurité by design, métriques).
+- [x] Compétences & outils (liste).
+- [x] Certifications (badges textuels + placeholders d’ID).
+- [x] Mini-FAQ (3–4 questions).
+- [x] CTA vers Études de cas.
 
 ### Tâches
-- [ ] `app/(site)/a-propos/page.tsx`.
-- [ ] Grille 1–2 colonnes, lecture confortable (Prose).
-- [ ] BreadCrumbs.
-- [ ] SEO dédié.
+- [x] `src/app/about/page.tsx`.
+- [x] Composants modulaires (Intro, PortraitCard, SocialLinks).
+- [x] Grille 1–2 colonnes responsive.
+- [x] SEO dédié.
 - [ ] Tests responsive/a11y + preview + scores Lighthouse.
 
 ### Definition of Done (À propos)
