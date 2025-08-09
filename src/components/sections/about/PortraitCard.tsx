@@ -6,8 +6,8 @@ export function PortraitCard() {
       <Image
         src="/images/portrait-placeholder.jpg"
         alt="Portrait of the site owner (placeholder)"
-        width={400}
-        height={400}
+        width={350}
+        height={350}
         priority
         className="w-full h-auto object-cover"
       />
