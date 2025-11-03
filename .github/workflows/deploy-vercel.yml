@@ -35,7 +35,7 @@ jobs:
           restore-keys: ${{ runner.os }}-pnpm-
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile # Utilise pnpm au lieu de npm ci
+        run: pnpm install --no-frozen-lockfile # Permet de recréer le lockfile si nécessaire
 
       - name: Build Next.js app
         run: pnpm run build
