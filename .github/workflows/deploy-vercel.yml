@@ -3,7 +3,7 @@ name: Deploy Next.js to Vercel
 on:
   push:
     branches:
-      - main  # Remplace 'main' par ta branche principale si nécessaire
+      - main # Remplace 'main' par ta branche principale si nécessaire
   pull_request:
     branches:
       - main
@@ -13,35 +13,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'  # Simplifié à 22 pour correspondre à .node-version
-        cache: 'pnpm'  # Utilise pnpm au lieu de npm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 8
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22" # Simplifié à 22 pour correspondre à .node-version
+          cache: "pnpm" # Utilise pnpm au lieu de npm
 
-    - name: Cache pnpm dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.pnpm-store
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: ${{ runner.os }}-pnpm-
-  
-    - name: Install Dependencies
-      run: pnpm install --frozen-lockfile  # Utilise pnpm au lieu de npm ci
-  
-    - name: Build Next.js app
-      run: pnpm run build
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-
 
-    - name: Deploy to Vercel
-      run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-      env:
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile # Utilise pnpm au lieu de npm ci
+
+      - name: Build Next.js app
+        run: pnpm run build
+
+      - name: Deploy to Vercel
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
