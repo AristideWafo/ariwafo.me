@@ -18,12 +18,12 @@ export function Footer() {
           <Link className="hover:underline underline-offset-4" href="/articles">
             Articles
           </Link>
-          <Link className="hover:underline underline-offset-4" href="/podcast">
+          {/* <Link className="hover:underline underline-offset-4" href="/podcast">
             Podcast
           </Link>
           <Link className="hover:underline underline-offset-4" href="/cases">
             Case Studies
-          </Link>
+          </Link> */}
         </div>
         {/* <p className="text-muted-foreground">
           Footer content coming soon – final version in progress.
