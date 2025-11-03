@@ -3,7 +3,7 @@ name: Deploy Next.js to Vercel
 on:
   push:
     branches:
-      - main  # Remplace 'main' par ta branche principale si nécessaire
+      - main # Remplace 'main' par ta branche principale si nécessaire
   pull_request:
     branches:
       - main
@@ -13,30 +13,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'  # Assure-toi d'utiliser la version compatible avec ton projet Next.js
-        cache: 'npm'  # Active le cache natif pour npm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
-    - name: Cache npm dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm  # Chemin du cache npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-        restore-keys: ${{ runner.os }}-npm-
-  
-    - name: Install Dependencies
-      run: npm ci  # Utiliser 'npm ci' pour une installation propre et rapide
-  
-    - name: Build Next.js app
-      run: npm run build
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22" # Simplifié à 22 pour correspondre à .node-version
+          cache: "pnpm" # Utilise pnpm au lieu de npm
 
-    - name: Deploy to Vercel
-      run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-      env:
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile # Permet de recréer le lockfile si nécessaire
+
+      - name: Build Next.js app
+        run: pnpm run build
+
+      - name: Deploy to Vercel
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

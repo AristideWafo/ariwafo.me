@@ -15,7 +15,7 @@ import { ProofsSection } from '@/components/sections/home/ProofsSection';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Home',
-  description: 'Placeholder home page – cloud & DevOps engineer portfolio.',
+  description: 'My home page – cloud & DevOps engineer portfolio.',
   path: '/',
 });
 
@@ -28,42 +28,50 @@ const latestEpisode = getLatestEpisode();
 export default function HomePage() {
   return (
     <main> 
-      <HeroSection />
-      <ProofsSection />
-      <PillarsSection />
+      {process.env.NEXT_PUBLIC_SHOW_HERO === 'true' && <HeroSection />}
+      {process.env.NEXT_PUBLIC_SHOW_PROOFS === 'true' && <ProofsSection />}
+      {process.env.NEXT_PUBLIC_SHOW_PILLARS === 'true' && <PillarsSection />}
+      
+      {process.env.NEXT_PUBLIC_SHOW_CASE_STUDIES === 'true' && (
       <Section>
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold tracking-tight">Featured Case Studies (placeholder)</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {caseTeasers.map(c => (
-              <Card key={c.id} className="p-4 space-y-3">
-                <Tag>{c.tag}</Tag>
-                <h3 className="font-semibold tracking-tight">{c.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{c.excerpt}</p>
-              </Card>
-            ))}
-          </div>
+        <h2 className="text-xl font-semibold tracking-tight">Featured Case Studies (placeholder)</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {caseTeasers.map(c => (
+          <Card key={c.id} className="p-4 space-y-3">
+            <Tag>{c.tag}</Tag>
+            <h3 className="font-semibold tracking-tight">{c.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">{c.excerpt}</p>
+          </Card>
+          ))}
+        </div>
         </div>
       </Section>
-      <StackSection />
+      )}
+
+      {process.env.NEXT_PUBLIC_SHOW_STACK === 'true' && <StackSection />}
+      
+      {process.env.NEXT_PUBLIC_SHOW_LATEST_CONTENT === 'true' && (
       <Section>
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold tracking-tight">Latest Content (placeholder)</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card className="p-4 space-y-2">
-              <Tag>{latestArticle?.tags[0] || 'Article'}</Tag>
-              <h3 className="font-medium">{latestArticle?.title}</h3>
-              <p className="text-sm text-muted-foreground">{latestArticle?.description}</p>
-            </Card>
-            <Card className="p-4 space-y-2">
-              <Tag>Podcast</Tag>
-              <h3 className="font-medium">{latestEpisode?.title}</h3>
-              <p className="text-sm text-muted-foreground">{latestEpisode?.summary}</p>
-            </Card>
-          </div>
+        <h2 className="text-xl font-semibold tracking-tight">Latest Content</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="p-4 space-y-2">
+          <Tag>{latestArticle?.tags[0] || 'Article'}</Tag>
+          <h3 className="font-medium">{latestArticle?.title}</h3>
+          <p className="text-sm text-muted-foreground">{latestArticle?.description}</p>
+          </Card>
+          <Card className="p-4 space-y-2">
+          <Tag>Podcast</Tag>
+          <h3 className="font-medium">{latestEpisode?.title}</h3>
+          <p className="text-sm text-muted-foreground">{latestEpisode?.summary}</p>
+          </Card>
+        </div>
         </div>
       </Section>
-      <ContactCtaSection />
+      )}
+
+      {process.env.NEXT_PUBLIC_SHOW_CONTACT === 'true' && <ContactCtaSection />}
     </main>
   );
 }

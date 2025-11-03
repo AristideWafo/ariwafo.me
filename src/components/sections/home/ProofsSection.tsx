@@ -1,39 +1,48 @@
-import React from 'react';
-import { Section } from '@/components/ui/Section';
-import { Kpi } from '@/components/ui/Kpi';
-import Link from 'next/link';
+"use client"
+
+import React from "react";
+import { Section } from "@/components/ui/Section";
+import { Kpi } from "@/components/ui/Kpi";
+import ExperienceCard from "@/components/experience/ExperienceCard";
+import { work } from "@/lib/content/experience";
+import Link from "next/link";
 
 const kpis = [
-  { value: '5+', label: 'Years experience', note: 'placeholder' },
-  { value: '20+', label: 'Projects delivered', note: 'placeholder' }
+  {
+    value: "1",
+    label: "Years of experience",
+    note: "Including apprenticeship and professional projects",
+  },
+  {
+    value: "4",
+    label: "Projects delivered",
+    note: "Cloud, DevOps, and software development projects",
+  },
 ];
 
-const certs = [
-  { code: 'AWS SAA-C03', label: 'AWS Solutions Architect Associate' },
-  { code: 'Terraform Associate', label: 'HashiCorp Terraform Associate' }
-];
 
 export function ProofsSection() {
+  // Affiche seulement la première expérience (la plus récente)
+  const displayedExperiences = work.slice(0, 1);
+  
   return (
     <Section>
-      <div className="space-y-10">
+      <div className="space-y-10 p-6 rounded-lg border border-border/60 shadow-sm">
         <div className="grid gap-6 md:grid-cols-3" aria-label="Key metrics">
-          {kpis.map(k => <Kpi key={k.label} value={k.value} label={k.label} note={k.note} />)}
+          {kpis.map((k) => (
+            <Kpi key={k.label} value={k.value} label={k.label} note={k.note} />
+          ))}
         </div>
-        <div className="space-y-4" aria-label="Certifications">
-          <h2 className="text-sm font-medium tracking-wide uppercase text-muted-foreground">Certifications (placeholders)</h2>
-          <ul className="flex flex-wrap gap-3 text-sm">
-            {certs.map(c => (
-              <li key={c.code} className="rounded border border-border/60 px-2 py-1 bg-muted/30">
-                <span className="font-medium">{c.code}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="text-sm">
-          <p>
-            Highlight case: <Link className="underline underline-offset-4 hover:text-foreground" href="/cases">View a representative case study (placeholder)</Link>
-          </p>
+        <div>
+          <ExperienceCard items={displayedExperiences} />
+          <Link 
+            href="/experiences"
+            className="block text-sm text-center w-full mt-2 py-2 text-muted-foreground hover:text-foreground transition-all duration-300 cursor-pointer group"
+          >
+            <span className="group-hover:translate-x-1 inline-block transition-transform duration-300">
+              Voir toutes mes expériences →
+            </span>
+          </Link>
         </div>
       </div>
     </Section>
