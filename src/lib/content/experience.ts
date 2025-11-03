@@ -10,6 +10,14 @@ export type Experience = {
 
 export const work: Experience[] = [
   {
+    company: "Societe Generale",
+    role: "Observability Engineer",
+    start: "2025-09",
+    end: "Present",
+    logo: "https://media.licdn.com/dms/image/v2/D4E0BAQGGKghGT0b6HA/company-logo_100_100/company-logo_100_100/0/1722346015738/astree_software_logo?e=1757548800&v=beta&t=zXTdsQYd93tKfoRJWA2zqd6MuJ8CDqsqylhDKG3gCqs",
+    url: "https://www.astree-software.fr/en/",
+  },
+  {
     company: "Astree Software",
     role: "Backend Developer",
     start: "2025-02",
