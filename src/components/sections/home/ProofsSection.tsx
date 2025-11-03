@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Section } from "@/components/ui/Section";
 import { Kpi } from "@/components/ui/Kpi";
 import ExperienceCard from "@/components/experience/ExperienceCard";
 import { work } from "@/lib/content/experience";
+import Link from "next/link";
 
 const kpis = [
   {
@@ -21,14 +22,8 @@ const kpis = [
 
 
 export function ProofsSection() {
-  const [showAllExperiences, setShowAllExperiences] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  const displayedExperiences = showAllExperiences ? work : work.slice(0, 1);
+  // Affiche seulement la première expérience (la plus récente)
+  const displayedExperiences = work.slice(0, 1);
   
   return (
     <Section>
@@ -40,14 +35,14 @@ export function ProofsSection() {
         </div>
         <div>
           <ExperienceCard items={displayedExperiences} />
-          {isClient && (
-            <button
-              onClick={() => setShowAllExperiences(!showAllExperiences)}
-              className="text-sm text-center w-full mt-2 py-2 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
-            >
-              {showAllExperiences ? "Show less" : "Show more"}
-            </button>
-          )}
+          <Link 
+            href="/experiences"
+            className="block text-sm text-center w-full mt-2 py-2 text-muted-foreground hover:text-foreground transition-all duration-300 cursor-pointer group"
+          >
+            <span className="group-hover:translate-x-1 inline-block transition-transform duration-300">
+              Voir toutes mes expériences →
+            </span>
+          </Link>
         </div>
       </div>
     </Section>

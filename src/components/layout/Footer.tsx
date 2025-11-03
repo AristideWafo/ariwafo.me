@@ -12,6 +12,12 @@ export function Footer() {
           <Link className="hover:underline underline-offset-4" href="/about">
             About
           </Link>
+          <Link
+            className="hover:underline underline-offset-4"
+            href="/experiences"
+          >
+            Experiences
+          </Link>
           <Link className="hover:underline underline-offset-4" href="/contact">
             Contact
           </Link>

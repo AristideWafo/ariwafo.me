@@ -8,7 +8,7 @@ import { YoutubeIcon } from '../../../../public/icons/YoutubeIcon';
 import { EmailIcon } from '../../../../public/icons/EmailIcon';
 
 // Mapping des icônes par plateforme
-const iconMap = {
+export const iconMap = {
   'GitHub': GithubIcon,
   'LinkedIn': LinkedinIcon,
   'X': XIcon,

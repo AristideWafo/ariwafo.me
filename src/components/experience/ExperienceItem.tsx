@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Experience } from "@/lib/content/experience";
 import CompanyLogo from "./CompanyLogo";

@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { cn } from "../src/lib/utils";
 
 export const metadata: Metadata = {
@@ -44,7 +45,9 @@ export default function RootLayout({
 
         <Header />
         <main id="main" role="main" className="relative">
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
         <Footer />
       </body>

@@ -27,6 +27,7 @@ export function Header() {
         <nav aria-label="Primary" className="hidden md:block ml-auto">
           <ul className="flex gap-4 text-sm">
             <li><Link className="hover:underline underline-offset-4" href="/about">About</Link></li>
+            <li><Link className="hover:underline underline-offset-4" href="/experiences">Experiences</Link></li>
             <li><Link className="hover:underline underline-offset-4" href="/articles">Articles</Link></li>
             {/* <li><Link className="hover:underline underline-offset-4" href="/podcast">Podcast</Link></li> */}
             {/* <li><Link className="hover:underline underline-offset-4" href="/cases">Case Studies</Link></li> */}
