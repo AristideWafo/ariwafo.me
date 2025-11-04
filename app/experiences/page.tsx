@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import ExperienceCard from "@/components/experience/ExperienceCard";
 import { work } from "@/lib/content/experience";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Mes Expériences - Aristide WAFO",
@@ -14,7 +13,7 @@ export default function ExperiencesPage() {
     <main className="min-h-screen">
       {/* Header avec navigation */}
       <Section className="pb-0 md:pb-0">
-        <div className="flex items-center gap-4 mb-8">
+        {/* <div className="flex items-center gap-4 mb-8">
           <Link 
             href="/"
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-200 group"
@@ -22,10 +21,10 @@ export default function ExperiencesPage() {
             <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
             <span>Retour</span>
           </Link>
-        </div>
+        </div> */}
         
         <div className="space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
             Mes Expériences
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
