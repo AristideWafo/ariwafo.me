@@ -166,7 +166,7 @@ export default function ContactPage() {
               </h3>
               <p className="text-muted-foreground text-sm">
                 Infrastructure cloud, automatisation DevOps, pipelines CI/CD, et
-                projets Infrastructure as Code (Terraform, AWS CDK).
+                projets Infrastructure as Code (Terraform, AWS CDK)...
               </p>
             </div>
             <div className="p-4 rounded-lg border border-border/60 hover:bg-muted/20 transition-colors">
