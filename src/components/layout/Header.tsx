@@ -8,8 +8,8 @@ export function Header() {
   return (
     <header role="banner" className="w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="mx-auto max-w-4xl px-4 py-4 flex items-center gap-6">
-        <Link href="/" className="font-mono text-sm font-semibold tracking-tight" aria-label="Home">
-          ariwafo.me
+        <Link href="/" className="font-mono text-md font-semibold tracking-tight" aria-label="Home">
+          aristide WAFO
         </Link>
         
         {/* Hamburger button */}
