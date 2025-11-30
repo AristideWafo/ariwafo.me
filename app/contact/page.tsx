@@ -59,27 +59,6 @@ export default function ContactPage() {
             <div>
               <h2 className="text-2xl font-semibold mb-6">Contactez-moi</h2>
               <div className="space-y-4">
-                {/* Email */}
-                {/* <div className="p-4 rounded-lg border border-border/60 hover:border-border transition-colors group">
-                  <div className="flex items-start gap-3">
-                    <EmailIcon
-                      size={20}
-                      className="text-muted-foreground group-hover:text-foreground transition-colors mt-1"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-medium mb-2">Email</h3>
-                      <p className="text-muted-foreground text-sm mb-3">
-                        Pour les demandes de projet et collaborations
-                      </p>
-                      <Link
-                        href={`mailto:${siteProfile.email}`}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3"
-                      >
-                        Envoyer un email
-                      </Link>
-                    </div>
-                  </div>
-                </div> */}
 
                 {/* LinkedIn */}
                 <div className="p-4 rounded-lg border border-border/60 hover:border-border transition-colors group">
@@ -155,7 +134,7 @@ export default function ContactPage() {
       </Section>
 
       {/* FAQ Section */}
-      <Section>
+      {/* <Section>
         <div className="space-y-6">
           <h2 className="text-2xl font-semibold">Questions fréquentes</h2>
           <div className="grid gap-4">
@@ -195,7 +174,7 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
-      </Section>
+      </Section> */}
     </div>
   );
 }

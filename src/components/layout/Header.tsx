@@ -28,6 +28,7 @@ export function Header() {
           <ul className="flex gap-4 text-sm">
             <li><Link className="hover:underline underline-offset-4" href="/about">About</Link></li>
             <li><Link className="hover:underline underline-offset-4" href="/experiences">Experiences</Link></li>
+            <li><Link className="hover:underline underline-offset-4" href="/projects">Projects</Link></li>
             <li><Link className="hover:underline underline-offset-4" href="/articles">Articles</Link></li>
             {/* <li><Link className="hover:underline underline-offset-4" href="/podcast">Podcast</Link></li> */}
             {/* <li><Link className="hover:underline underline-offset-4" href="/cases">Case Studies</Link></li> */}
@@ -40,6 +41,8 @@ export function Header() {
         <nav className="md:hidden border-t border-border/60">
           <ul className="flex flex-col text-sm">
             <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/about">About</Link></li>
+            <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/experiences">Experiences</Link></li>
+            <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/projects">Projects</Link></li>
             <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/articles">Articles</Link></li>
             {/* <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/podcast">Podcast</Link></li> */}
             {/* <li><Link className="block px-4 py-2 hover:bg-gray-100" href="/cases">Case Studies</Link></li> */}

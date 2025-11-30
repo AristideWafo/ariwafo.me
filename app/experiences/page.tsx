@@ -13,15 +13,6 @@ export default function ExperiencesPage() {
     <main className="min-h-screen">
       {/* Header avec navigation */}
       <Section className="pb-0 md:pb-0">
-        {/* <div className="flex items-center gap-4 mb-8">
-          <Link 
-            href="/"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-200 group"
-          >
-            <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-            <span>Retour</span>
-          </Link>
-        </div> */}
         
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
