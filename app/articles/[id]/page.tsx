@@ -5,15 +5,16 @@ import { Badge } from "@/components/ui/Badge";
 import { internalArticles } from "@/src/lib/content/articles/data";
 
 interface ArticlePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
-  const article = internalArticles.find((a) => a.id === params.id);
+  const { id } = await params;
+  const article = internalArticles.find((a) => a.id === id);
 
   if (!article) {
     return {
@@ -27,8 +28,9 @@ export async function generateMetadata({
   };
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const article = internalArticles.find((a) => a.id === params.id);
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { id } = await params;
+  const article = internalArticles.find((a) => a.id === id);
 
   if (!article) {
     notFound();

@@ -98,7 +98,7 @@ export const externalArticles: ExternalArticle[] = [
     description: "DORA Metrics: The Scientific Approach to Measuring DevOps Performance"
   },  {
     id: "from-zero-to-production-ci-pipeline-java",
-    url: "https://medium.com/@wafoaristide/from-zero-to-production-building-a-robust-ci-pipeline-for-your-java-application-with-github-f5539cca17b4?source=user_profile_page---------2-------------0d10d7fccde2----------------------",
+    url: "https://medium.com/@wafoaristide/from-zero-to-production-building-a-robust-ci-pipeline-for-your-java-application-with-github-f5539cca17b4",
     platform: "Medium",
     description: "How to fully automate your Java development cycle, from build to release, in less than an hour"
   },
