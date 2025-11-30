@@ -15,9 +15,8 @@ export const work: Experience[] = [
     company: "Societe Generale",
     role: "Observability Engineer",
     description: [
-      "Implementing monitoring and observability solutions for banking infrastructure",
-      "Working with metrics, logs, and distributed tracing systems",
-      "Ensuring system reliability and performance monitoring",
+      "Deployed enterprise observability stack across Kubernetes clusters, Docker containers, and EC2 instances",
+      "Established SLI/SLO framework for critical services in collaboration with product and engineering teams, reducing MTTR"
     ],
     techStack: [
       "Prometheus",
@@ -36,9 +35,10 @@ export const work: Experience[] = [
     company: "Astree Software",
     role: "Backend Developer",
     description: [
-      "Developed scalable backend services using modern frameworks",
-      "Focused on API design and database optimization",
-      "Implemented microservices architecture and system integration",
+        "Automated the migration of 300+ customers via Spring Boot application, reducing man  ual migration time from 5 days to 6 hours per customer, generating an 80% savings in operational costs.",
+        "Designed a robust multi-source architecture with JPA and Entity Managers handling 500K+ simultaneous records, eliminating data synchronization errors",
+        "Optimized migration performance by using batch processing and pagination, reducing critical volumes (450+ entities) from 8 hours to 2 hours",
+        "Accelerated delivery cycles by 70% by implementing full GitLab CI/CD (automated build/test/deploy, artifact publishing), moving from weekly to daily deployments"
     ],
     techStack: [
       "Node.js",
@@ -79,10 +79,10 @@ export const work: Experience[] = [
     company: "SCI2M",
     role: "Backend Developer",
     description: [
-      "Designed and implemented RESTful APIs for client applications",
-      "Worked with microservices architecture and database optimization",
-      "Maintained code quality through testing and code reviews",
-      "Mentored junior developers on best practices",
+      "Eliminated technical debt by 60% through comprehensive system audit and strategic refactoring of 4 critical Java modules",
+      "Architected microservices migration from monolithic application to 5 independent services with RabbitMQ async messaging and Redis caching, accelerating deployment cycles by 40% ",
+      "Achieved 70% code coverage by implementing comprehensive testing strategy with JUnit and Mockito, catching 90% of bugs pre-production and reducing post-release hotfixes from 8/month to <1/month",
+      "Drove architectural excellence through code reviews, technical design meetings, and DevOps best practices implementation",
     ],
     techStack: ["Java", "Spring Boot", "MySQL", "Docker", "Maven", "JUnit"],
     start: "2024-05",
