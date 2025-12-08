@@ -82,6 +82,11 @@ export const internalArticles: InternalArticle[] = [
 
 export const externalArticles: ExternalArticle[] = [
   {
+    id: "securing-aws-infrastructure-with-bastion-hosts-and-terraform",
+    url: "https://medium.com/@wafoaristide/securing-aws-infrastructure-with-bastion-hosts-and-terraform-ec54473932dc",
+    platform: "Medium",
+    description: "Securing AWS Infrastructure with Bastion Hosts and Terraform"
+  },  {
     id: "thales-battle-dev-2025-epitech",
     url: "https://www.epitech.eu/2025/10/27/thales-battle-dev-2025-notre-campus-parisien-repond-present/",
     platform: "Epitech",
