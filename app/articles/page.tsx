@@ -54,11 +54,11 @@ export default function ArticlesPage() {
       <Section className="pb-0 md:pb-0">
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Articles & Ressources
+            Articles & Resources
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Guides techniques, retours d&apos;expérience et ressources sur
-            l&apos;infrastructure cloud, DevOps et les technologies modernes.
+            Technical guides, experience feedback and resources on cloud
+            infrastructure, DevOps and modern technologies.
           </p>
         </div>
 
@@ -85,7 +85,7 @@ export default function ArticlesPage() {
       {!hasResults ? (
         <Section>
           <p className="text-center text-muted-foreground py-12">
-            Aucun article trouvé pour ce tag.
+            No articles found for this tag.
           </p>
         </Section>
       ) : (
@@ -108,13 +108,13 @@ export default function ArticlesPage() {
             <Section>
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-semibold">Articles Externes</h2>
+                  <h2 className="text-2xl font-semibold">External Articles</h2>
                   <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
                     {filteredExternalArticles.length}
                   </span>
                 </div>
                 <p className="text-muted-foreground text-sm">
-                  Retrouvez mes publications sur Medium, Dev.to et LinkedIn
+                  Find my publications on Medium, Dev.to and LinkedIn
                 </p>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filteredExternalArticles.map((article) => (
