@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  metadataBase: new URL("https://aristidewafo.me"),
+  metadataBase: new URL("https://aristidewafo.vercel.app/"),
 };
 
 export default function RootLayout({
