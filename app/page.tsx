@@ -1,4 +1,3 @@
-// import Image from "next/image";
 
 import { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -9,7 +8,6 @@ import { ContactCtaSection } from "@/components/sections/home/ContactCtaSection"
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
-// import { getLatestArticle } from "@/src/lib/content/articles/data";
 import { ProofsSection } from "@/components/sections/home/ProofsSection";
 
 export const metadata: Metadata = buildMetadata({

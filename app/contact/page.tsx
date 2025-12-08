@@ -59,7 +59,6 @@ export default function ContactPage() {
             <div>
               <h2 className="text-2xl font-semibold mb-6">Contactez-moi</h2>
               <div className="space-y-4">
-
                 {/* LinkedIn */}
                 <div className="p-4 rounded-lg border border-border/60 hover:border-border transition-colors group">
                   <div className="flex items-start gap-3">
@@ -122,14 +121,17 @@ export default function ContactPage() {
                 ouvrables.
               </p>
             </div>
-
           </div>
 
           {/* Contact Form */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">Envoyer un message</h2>
-            <ContactForm />
-          </div>
+          {process.env.NEXT_PUBLIC_CONTACT_FORM === "true" && (
+            <div>
+              <h2 className="text-2xl font-semibold mb-6">
+                Envoyer un message
+              </h2>
+              <ContactForm />
+            </div>
+          )}
         </div>
       </Section>
 
