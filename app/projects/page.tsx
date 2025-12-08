@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
@@ -6,15 +6,14 @@ import { projects } from "@/lib/content/projects/data";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { cn } from "@/lib/utils";
 
-
 export default function ProjectsPage() {
   const [selectedTag, setSelectedTag] = useState<string>("All");
 
   // Extraire tous les tags uniques des projets
   const allTags = useMemo(() => {
     const tagsSet = new Set<string>();
-    projects.forEach(project => {
-      project.tags?.forEach(tag => tagsSet.add(tag));
+    projects.forEach((project) => {
+      project.tags?.forEach((tag) => tagsSet.add(tag));
     });
     return ["All", ...Array.from(tagsSet).sort()];
   }, []);
@@ -22,9 +21,7 @@ export default function ProjectsPage() {
   // Filtrer les projets par tag
   const filteredProjects = useMemo(() => {
     if (selectedTag === "All") return projects;
-    return projects.filter(project => 
-      project.tags?.includes(selectedTag)
-    );
+    return projects.filter((project) => project.tags?.includes(selectedTag));
   }, [selectedTag]);
 
   return (
@@ -33,12 +30,11 @@ export default function ProjectsPage() {
       <Section className="pb-0 md:pb-0 ">
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Mes Projets
+            My Projects
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Une sélection de projets d&apos;infrastructure cloud,
-            d&apos;automatisation DevOps et de solutions techniques que
-            j&apos;ai développés.
+            A selection of cloud infrastructure, DevOps automation, and
+            technical solutions I&apos;ve developed.
           </p>
         </div>
 
@@ -72,7 +68,7 @@ export default function ProjectsPage() {
             </div>
           ) : (
             <p className="text-center text-muted-foreground py-12">
-              Aucun projet trouvé pour ce tag.
+              No projects found for this tag.
             </p>
           )}
         </div>

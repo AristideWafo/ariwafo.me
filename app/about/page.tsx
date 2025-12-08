@@ -5,9 +5,9 @@ import { PortraitCard } from "../../src/components/sections/about/PortraitCard";
 import { SocialLinks } from "../../src/components/sections/about/SocialLinks";
 
 export const metadata: Metadata = {
-  title: `À propos — ${siteProfile.name}`,
+  title: `About — ${siteProfile.name}`,
   description:
-    "Placeholder about page: background, role, professional focus, collaboration style, interests. (≤155 chars placeholder)",
+    "Learn more about my background, role, professional focus, collaboration style, and interests as a Cloud & DevOps Engineer.",
 };
 
 export default function AboutPage() {
@@ -16,8 +16,7 @@ export default function AboutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
         <div>
           <AboutIntro />
-          <div className="mt-12">
-          </div>
+          <div className="mt-12"></div>
         </div>
         <aside className="space-y-10" aria-label="Profile media and links">
           <PortraitCard />

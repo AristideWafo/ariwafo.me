@@ -8,7 +8,7 @@ import { LinkedinIcon } from "../../public/icons/LinkedinIcon";
 export const metadata: Metadata = {
   title: "Contact - Aristide WAFO",
   description:
-    "Contactez-moi pour vos projets d'infrastructure cloud, collaborations DevOps ou discussions techniques.",
+    "Contact me for your cloud infrastructure projects, DevOps collaborations or technical discussions.",
 };
 
 export default function ContactPage() {
@@ -42,12 +42,11 @@ export default function ContactPage() {
 
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Travaillons Ensemble
+            Let&apos;s Work Together
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Intéressé par l&apos;infrastructure cloud, l&apos;automatisation
-            DevOps, ou une collaboration technique ? J&apos;aimerais en savoir
-            plus sur votre projet.
+            Interested in cloud infrastructure, DevOps automation, or technical
+            collaboration? I&apos;d love to learn more about your project.
           </p>
         </div>
       </Section>
@@ -94,15 +93,15 @@ export default function ContactPage() {
                       📅
                     </span>
                     <div className="flex-1">
-                      <h3 className="font-medium mb-2">Planifier un appel</h3>
+                      <h3 className="font-medium mb-2">Schedule a Call</h3>
                       <p className="text-muted-foreground text-sm mb-3">
-                        Réservez une discussion technique de 30 minutes
+                        Book a 30-minute technical discussion
                       </p>
                       <Link
-                        href={`mailto:${siteProfile.email}?subject=Demande de rendez-vous`}
+                        href={`mailto:${siteProfile.email}?subject=Meeting Request`}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3"
                       >
-                        Demander un créneau
+                        Request a Slot
                       </Link>
                     </div>
                   </div>
@@ -114,11 +113,10 @@ export default function ContactPage() {
             <div className="p-4 bg-muted/30 rounded-lg border border-border/40">
               <h3 className="font-medium mb-2 flex items-center gap-2">
                 <span>⏱️</span>
-                Temps de réponse
+                Response Time
               </h3>
               <p className="text-muted-foreground text-sm">
-                Je réponds généralement dans les 24-48 heures pendant les jours
-                ouvrables.
+                I typically respond within 24-48 hours during business days.
               </p>
             </div>
           </div>
@@ -126,9 +124,7 @@ export default function ContactPage() {
           {/* Contact Form */}
           {process.env.NEXT_PUBLIC_CONTACT_FORM === "true" && (
             <div>
-              <h2 className="text-2xl font-semibold mb-6">
-                Envoyer un message
-              </h2>
+              <h2 className="text-2xl font-semibold mb-6">Send a Message</h2>
               <ContactForm />
             </div>
           )}

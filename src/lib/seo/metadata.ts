@@ -11,7 +11,7 @@ interface BuildMetaOptions {
 
 const site = {
   name: 'Portfolio',
-  baseUrl: 'https://ariwafo.me', // replace on deploy
+  baseUrl: 'https://aristidewafo.vercel.app/', // replace on deploy
   defaultDescription: 'Minimal cloud & DevOps engineer portfolio (placeholder content).'
 };
 

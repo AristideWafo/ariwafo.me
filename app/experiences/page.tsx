@@ -4,8 +4,9 @@ import ExperienceCard from "@/components/experience/ExperienceCard";
 import { work } from "@/lib/content/experience";
 
 export const metadata: Metadata = {
-  title: "Mes Expériences - Aristide WAFO",
-  description: "Découvrez mon parcours professionnel et mes expériences en tant qu'ingénieur Cloud & DevOps.",
+  title: "My Experiences - Aristide WAFO",
+  description:
+    "Discover my professional journey and experiences as a Cloud & DevOps Engineer.",
 };
 
 export default function ExperiencesPage() {
@@ -13,14 +14,13 @@ export default function ExperiencesPage() {
     <main className="min-h-screen">
       {/* Header avec navigation */}
       <Section className="pb-0 md:pb-0">
-        
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Mes Expériences
+            My Experiences
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Découvrez mon parcours professionnel et les projets sur lesquels j&apos;ai travaillé 
-            en tant qu&apos;ingénieur Cloud & DevOps.
+            Discover my professional journey and the projects I&apos;ve worked
+            on as a Cloud & DevOps Engineer.
           </p>
         </div>
       </Section>
