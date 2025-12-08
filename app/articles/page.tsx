@@ -1,20 +1,53 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ExternalArticleCard } from "@/components/articles/ExternalArticleCard";
 import {
-  featuredInternalArticles,
   internalArticles,
   externalArticles,
 } from "@/src/lib/content/articles/data";
-
-export const metadata: Metadata = {
-  title: "Articles - Aristide WAFO",
-  description:
-    "Découvrez mes articles sur l'infrastructure cloud, DevOps, Kubernetes et les dernières technologies. Guides pratiques et retours d'expérience.",
-};
+import { cn } from "@/lib/utils";
 
 export default function ArticlesPage() {
+  const [selectedTag, setSelectedTag] = useState<string>("All");
+
+  // Extraire tous les tags uniques des articles
+  const allTags = useMemo(() => {
+    const tagsSet = new Set<string>();
+
+    // Tags des articles internes
+    internalArticles.forEach((article) => {
+      article.tags?.forEach((tag) => tagsSet.add(tag));
+    });
+
+    // Tags des articles externes
+    externalArticles.forEach((article) => {
+      article.tags?.forEach((tag) => tagsSet.add(tag));
+    });
+
+    return ["All", ...Array.from(tagsSet).sort()];
+  }, []);
+
+  // Filtrer les articles par tag
+  const filteredInternalArticles = useMemo(() => {
+    if (selectedTag === "All") return internalArticles;
+    return internalArticles.filter((article) =>
+      article.tags?.includes(selectedTag)
+    );
+  }, [selectedTag]);
+
+  const filteredExternalArticles = useMemo(() => {
+    if (selectedTag === "All") return externalArticles;
+    return externalArticles.filter((article) =>
+      article.tags?.includes(selectedTag)
+    );
+  }, [selectedTag]);
+
+  const hasResults =
+    filteredInternalArticles.length > 0 || filteredExternalArticles.length > 0;
+
   return (
     <div className="min-h-screen">
       {/* Header Section */}
@@ -28,41 +61,70 @@ export default function ArticlesPage() {
             l&apos;infrastructure cloud, DevOps et les technologies modernes.
           </p>
         </div>
+
+        {/* Tags Filter */}
+        <div className="flex flex-wrap gap-2 mt-8">
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                selectedTag === tag
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
+              )}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
       </Section>
 
-      {/* Featured Articles Section */}
-      {featuredInternalArticles.length > 0 && (
+      {/* Articles Content */}
+      {!hasResults ? (
         <Section>
-          <div className="space-y-6">
-            <div className="grid gap-8 md:grid-cols-2">
-              {internalArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} featured />
-              ))}
-            </div>
-          </div>
+          <p className="text-center text-muted-foreground py-12">
+            Aucun article trouvé pour ce tag.
+          </p>
         </Section>
-      )}
+      ) : (
+        <>
+          {/* Internal Articles Section */}
+          {filteredInternalArticles.length > 0 && (
+            <Section>
+              <div className="space-y-6">
+                <div className="grid gap-8 md:grid-cols-2">
+                  {filteredInternalArticles.map((article) => (
+                    <ArticleCard key={article.id} article={article} featured />
+                  ))}
+                </div>
+              </div>
+            </Section>
+          )}
 
-      {/* External Articles Section */}
-      {externalArticles.length > 0 && (
-        <Section>
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-semibold">Articles Externes</h2>
-              <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
-                {externalArticles.length}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-sm">
-              Retrouvez mes publications sur Medium, Dev.to et LinkedIn
-            </p>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {externalArticles.map((article) => (
-                <ExternalArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          </div>
-        </Section>
+          {/* External Articles Section */}
+          {filteredExternalArticles.length > 0 && (
+            <Section>
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-semibold">Articles Externes</h2>
+                  <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
+                    {filteredExternalArticles.length}
+                  </span>
+                </div>
+                <p className="text-muted-foreground text-sm">
+                  Retrouvez mes publications sur Medium, Dev.to et LinkedIn
+                </p>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredExternalArticles.map((article) => (
+                    <ExternalArticleCard key={article.id} article={article} />
+                  ))}
+                </div>
+              </div>
+            </Section>
+          )}
+        </>
       )}
     </div>
   );

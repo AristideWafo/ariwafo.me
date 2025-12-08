@@ -4,6 +4,7 @@ export interface Project {
   description: string;
   image: string;
   technologies: string[];
+  tags: string[];
   link: string;
   featured?: boolean;
 }
@@ -22,6 +23,7 @@ export const projects: Project[] = [
       "GitHub Actions",
       "Script Bash",
     ],
+    tags: ["Infrastructure", "AWS", "Terraform", "CI/CD", "Automation"],
     link: "https://github.com/AristideWafo/bastion-host",
     featured: true,
   },  {
@@ -36,6 +38,7 @@ export const projects: Project[] = [
       "GPT",
       "DevOps",
     ],
+    tags: ["AI", "DevOps", "Automation", "Code Quality"],
     link: "https://github.com/AristideWafo/ai-bot--review",
     featured: true,
   },{
@@ -50,6 +53,7 @@ export const projects: Project[] = [
       "Agent",
       "CI/CD",
     ],
+    tags: ["AWS", "DevOps", "AI", "Infrastructure", "Terraform"],
     link: "https://github.com/AristideWafo/aws-devops-agent",
     featured: true,
   },

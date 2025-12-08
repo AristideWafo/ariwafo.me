@@ -1,15 +1,32 @@
-import { Metadata } from "next";
-import { Section } from "@/components/ui/Section";
-import { projects, featuredProjects } from "@/lib/content/projects/data";
-import { ProjectCard } from "@/components/projects/ProjectCard";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Projets - Aristide WAFO",
-  description:
-    "Découvrez mes projets d'infrastructure cloud, automatisation DevOps et solutions techniques réalisés avec les dernières technologies.",
-};
+import { useState, useMemo } from "react";
+import { Section } from "@/components/ui/Section";
+import { projects } from "@/lib/content/projects/data";
+import { ProjectCard } from "@/components/projects/ProjectCard";
+import { cn } from "@/lib/utils";
+
 
 export default function ProjectsPage() {
+  const [selectedTag, setSelectedTag] = useState<string>("All");
+
+  // Extraire tous les tags uniques des projets
+  const allTags = useMemo(() => {
+    const tagsSet = new Set<string>();
+    projects.forEach(project => {
+      project.tags?.forEach(tag => tagsSet.add(tag));
+    });
+    return ["All", ...Array.from(tagsSet).sort()];
+  }, []);
+
+  // Filtrer les projets par tag
+  const filteredProjects = useMemo(() => {
+    if (selectedTag === "All") return projects;
+    return projects.filter(project => 
+      project.tags?.includes(selectedTag)
+    );
+  }, [selectedTag]);
+
   return (
     <div className="min-h-screen">
       {/* Header Section */}
@@ -24,20 +41,42 @@ export default function ProjectsPage() {
             j&apos;ai développés.
           </p>
         </div>
+
+        {/* Tags Filter */}
+        <div className="flex flex-wrap gap-2 mt-8">
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                selectedTag === tag
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
+              )}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
       </Section>
 
-      {/* Featured Projects Section */}
-      {featuredProjects.length > 0 && (
-        <Section>
-          <div className="space-y-6 ">
+      {/* Projects Grid */}
+      <Section>
+        <div className="space-y-6">
+          {filteredProjects.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+              {filteredProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
             </div>
-          </div>
-        </Section>
-      )}
+          ) : (
+            <p className="text-center text-muted-foreground py-12">
+              Aucun projet trouvé pour ce tag.
+            </p>
+          )}
+        </div>
+      </Section>
     </div>
   );
 }
