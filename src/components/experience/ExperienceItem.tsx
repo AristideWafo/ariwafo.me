@@ -1,11 +1,14 @@
 "use client";
+
 import React, { useState } from "react";
 import { Experience } from "@/lib/content/experience";
 import CompanyLogo from "./CompanyLogo";
 import DateRange from "./DateRange";
-import Link from "next/link";
+import { Tag } from "@/components/ui/Tag";
 
-type ExperienceItemProps = Experience;
+type ExperienceItemProps = Experience & { index?: number };
+
+const PREVIEW_BULLETS = 2;
 
 export default function ExperienceItem({
   company,
@@ -17,103 +20,83 @@ export default function ExperienceItem({
   duration,
   logo,
   url,
+  index,
 }: ExperienceItemProps) {
-  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  // Fonction pour tronquer la description à 2 éléments de liste
-  const truncateDescription = (items: string[]) => {
-    if (items.length <= 1) return items;
-    return items.slice(0, 1);
-  };
+  const bullets = description ?? [];
+  const canExpand = bullets.length > PREVIEW_BULLETS;
+  const visible = expanded ? bullets : bullets.slice(0, PREVIEW_BULLETS);
 
-  const shouldShowToggle = description && description.length > 2;
-  const content = (
-    <>
-      <div className="flex items-start gap-3">
-        <CompanyLogo src={logo} alt={company} />
-        <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold">{company}</h3>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            {role}
-          </p>
-          {description && (
-            <div className="mt-1">
-              <ul className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed space-y-1">
-                {(showFullDescription
-                  ? description
-                  : truncateDescription(description)
-                ).map((item, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-neutral-400 mr-2 mt-0.5 text-xs">
-                      •
-                    </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-                {!showFullDescription && shouldShowToggle && (
-                  <li className="flex items-start">
-                    <span className="text-neutral-400 mr-2 mt-0.5 text-xs">
-                      •
-                    </span>
-                    <span className="text-neutral-400">...</span>
-                  </li>
-                )}
-              </ul>
-              {shouldShowToggle && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowFullDescription(!showFullDescription);
-                  }}
-                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mt-2 focus:outline-none"
+  return (
+    <li className="border-b border-border py-6 last:border-b-0">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          <CompanyLogo src={logo} alt={company} />
+          <div className="min-w-0">
+            {typeof index === "number" && (
+              <span className="label-accent">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            )}
+            <h3 className="font-mono text-base font-semibold tracking-tight">
+              {url && url !== "#" ? (
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-primary"
                 >
-                  {showFullDescription ? "Show less" : "Show more"}
-                </button>
+                  {company} ↗
+                </a>
+              ) : (
+                company
               )}
-            </div>
-          )}
-          {/* badges correspondant aux tech stack */}
-          {techStack && techStack.length > 0 && (
-            <div className="mt-2">
-              <div className="flex flex-wrap gap-1.5">
-                {techStack.map((tech, index) => (
-                  <span
-                    key={index}
-                    className="inline-block px-2 py-1 text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-md border border-neutral-200 dark:border-neutral-700"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
+            </h3>
+            <p className="mt-0.5 text-sm text-muted-foreground">{role}</p>
+          </div>
+        </div>
+
+        <div className="shrink-0 sm:text-right">
+          <DateRange start={start} end={end} duration={duration} />
         </div>
       </div>
 
-      <div className="text-sm text-neutral-500 dark:text-neutral-400 md:text-right">
-        <DateRange start={start} end={end} duration={duration} />
-      </div>
-    </>
-  );
+      {bullets.length > 0 && (
+        <div className="mt-4 sm:pl-[60px]">
+          <ul className="space-y-2">
+            {visible.map((item, i) => (
+              <li key={i} className="flex gap-3 leading-relaxed">
+                <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 bg-primary" />
+                <span className="text-muted-foreground">{item}</span>
+              </li>
+            ))}
+          </ul>
 
-  // Wrap with link if URL is provided
-  if (url) {
-    return (
-      <li>
-        <Link
-          href={url}
-          className="group grid gap-3 md:grid-cols-[1fr,auto] items-start rounded-2xl px-2 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-900 focus-within:ring-2 focus:outline-none"
-        >
-          {content}
-        </Link>
-      </li>
-    );
-  }
+          {canExpand && (
+            <button
+              type="button"
+              onClick={() => setExpanded((open) => !open)}
+              aria-expanded={expanded}
+              className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:underline"
+            >
+              {expanded
+                ? "Show less"
+                : `Show ${bullets.length - PREVIEW_BULLETS} more`}
+            </button>
+          )}
+        </div>
+      )}
 
-  return (
-    <li className="group grid gap-3 md:grid-cols-[1fr,auto] items-start rounded-2xl px-2 py-3">
-      {content}
+      {techStack && techStack.length > 0 && (
+        <ul className="mt-4 flex flex-wrap gap-2 sm:pl-[60px]">
+          {techStack.map((tech) => (
+            <li key={tech}>
+              <Tag>{tech}</Tag>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 }

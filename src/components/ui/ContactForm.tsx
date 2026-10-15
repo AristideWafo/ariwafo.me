@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 interface FormData {
   name: string;
@@ -10,12 +11,16 @@ interface FormData {
   message: string;
 }
 
-interface FormErrors {
-  name?: string;
-  email?: string;
-  subject?: string;
-  message?: string;
-}
+type FormErrors = Partial<Record<keyof FormData, string>>;
+
+const fieldClass = (hasError: boolean) =>
+  cn(
+    "w-full border bg-background px-3 py-2.5 font-mono text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring",
+    hasError ? "border-destructive" : "border-border"
+  );
+
+const labelClass =
+  "mb-2 block font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground";
 
 export function ContactForm() {
   const [formData, setFormData] = useState<FormData>({
@@ -24,7 +29,6 @@ export function ContactForm() {
     subject: "",
     message: "",
   });
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -32,24 +36,20 @@ export function ContactForm() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Le nom est requis";
-    }
+    if (!formData.name.trim()) newErrors.name = "Name is required";
 
     if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
+      newErrors.email = "Invalid email format";
     }
 
-    if (!formData.subject.trim()) {
-      newErrors.subject = "Le sujet est requis";
-    }
+    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
 
     if (!formData.message.trim()) {
-      newErrors.message = "Le message est requis";
+      newErrors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Le message doit contenir au moins 10 caractères";
+      newErrors.message = "Message must be at least 10 characters";
     }
 
     setErrors(newErrors);
@@ -58,38 +58,26 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to send");
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'envoi');
-      }
-
-      // Succès
       setIsSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-
-      // Reset après 5 secondes
       setTimeout(() => setIsSubmitted(false), 5000);
     } catch (error) {
-      console.error("Erreur lors de l'envoi:", error);
-      
-      // Afficher l'erreur avec option de fallback
-      setErrors({ 
-        message: `Erreur lors de l'envoi. Vous pouvez aussi m'écrire directement à wafoaristide@gmail.com` 
+      console.error("Contact form submission failed:", error);
+      setErrors({
+        message:
+          "Could not send. You can also write to wafoaristide@gmail.com directly.",
       });
     } finally {
       setIsSubmitting(false);
@@ -101,8 +89,6 @@ export function ContactForm() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -110,24 +96,24 @@ export function ContactForm() {
 
   if (isSubmitted) {
     return (
-      <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
-        <div className="text-green-600 dark:text-green-400 mb-2">
-          ✅ Message envoyé avec succès !
-        </div>
-        <p className="text-sm text-green-600 dark:text-green-400">
-          Je vous répondrai dans les 24-48 heures.
+      <div
+        role="status"
+        className="border-l-2 border-primary border-y border-r border-y-border border-r-border p-6"
+      >
+        <p className="label-accent">Sent</p>
+        <p className="mt-3 leading-relaxed">
+          Thanks — I&apos;ll get back to you within 24–48 hours.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Name */}
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+      <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-2">
-            Nom *
+          <label htmlFor="name" className={labelClass}>
+            Name *
           </label>
           <input
             type="text"
@@ -135,19 +121,16 @@ export function ContactForm() {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-              errors.name ? "border-red-500" : "border-border"
-            }`}
-            placeholder="Votre nom"
+            aria-invalid={Boolean(errors.name)}
+            className={fieldClass(Boolean(errors.name))}
           />
           {errors.name && (
-            <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            <p className="mt-1 font-mono text-xs text-destructive">{errors.name}</p>
           )}
         </div>
 
-        {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
+          <label htmlFor="email" className={labelClass}>
             Email *
           </label>
           <input
@@ -156,21 +139,18 @@ export function ContactForm() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-              errors.email ? "border-red-500" : "border-border"
-            }`}
-            placeholder="votre@email.com"
+            aria-invalid={Boolean(errors.email)}
+            className={fieldClass(Boolean(errors.email))}
           />
           {errors.email && (
-            <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            <p className="mt-1 font-mono text-xs text-destructive">{errors.email}</p>
           )}
         </div>
       </div>
 
-      {/* Subject */}
       <div>
-        <label htmlFor="subject" className="block text-sm font-medium mb-2">
-          Sujet *
+        <label htmlFor="subject" className={labelClass}>
+          Subject *
         </label>
         <input
           type="text"
@@ -178,40 +158,34 @@ export function ContactForm() {
           name="subject"
           value={formData.subject}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-            errors.subject ? "border-red-500" : "border-border"
-          }`}
-          placeholder="Objet de votre message"
+          aria-invalid={Boolean(errors.subject)}
+          className={fieldClass(Boolean(errors.subject))}
         />
         {errors.subject && (
-          <p className="text-red-500 text-xs mt-1">{errors.subject}</p>
+          <p className="mt-1 font-mono text-xs text-destructive">{errors.subject}</p>
         )}
       </div>
 
-      {/* Message */}
       <div>
-        <label htmlFor="message" className="block text-sm font-medium mb-2">
+        <label htmlFor="message" className={labelClass}>
           Message *
         </label>
         <textarea
           id="message"
           name="message"
+          rows={6}
           value={formData.message}
           onChange={handleChange}
-          rows={6}
-          className={`w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none ${
-            errors.message ? "border-red-500" : "border-border"
-          }`}
-          placeholder="Décrivez votre projet ou votre demande..."
+          aria-invalid={Boolean(errors.message)}
+          className={cn(fieldClass(Boolean(errors.message)), "resize-none")}
         />
         {errors.message && (
-          <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+          <p className="mt-1 font-mono text-xs text-destructive">{errors.message}</p>
         )}
       </div>
 
-      {/* Submit Button */}
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
+      <Button type="submit" variant="secondary" disabled={isSubmitting} className="w-full">
+        {isSubmitting ? "Sending…" : "Send message"}
       </Button>
     </form>
   );

@@ -1,28 +1,34 @@
 import type { Metadata } from "next";
-import { siteProfile } from "@/lib/content/site";
-import { AboutIntro } from "../../src/components/sections/about/AboutIntro";
-import { PortraitCard } from "../../src/components/sections/about/PortraitCard";
-import { SocialLinks } from "../../src/components/sections/about/SocialLinks";
+import { Container } from "@/components/ui/Container";
+import { AboutIntro } from "@/components/sections/about/AboutIntro";
+import { PortraitCard } from "@/components/sections/about/PortraitCard";
+import { SocialLinks } from "@/components/sections/about/SocialLinks";
+import { CertificationsSection } from "@/components/sections/home/CertificationsSection";
+import { buildMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: `About — ${siteProfile.name}`,
+export const metadata: Metadata = buildMetadata({
+  title: "About",
   description:
-    "Learn more about my background, role, professional focus, collaboration style, and interests as a Cloud & DevOps Engineer.",
-};
+    "Backend engineer turned cloud and DevOps engineer. Observability at Société Générale, AWS and Terraform certified, based in Paris.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-        <div>
-          <AboutIntro />
-          <div className="mt-12"></div>
-        </div>
-        <aside className="space-y-10" aria-label="Profile media and links">
-          <PortraitCard />
-          <SocialLinks />
-        </aside>
-      </div>
-    </main>
+    <>
+      <section className="py-14 md:py-20">
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
+            <AboutIntro />
+            <aside className="space-y-10" aria-label="Portrait and links">
+              <PortraitCard />
+              <SocialLinks />
+            </aside>
+          </div>
+        </Container>
+      </section>
+
+      <CertificationsSection />
+    </>
   );
 }

@@ -1,34 +1,49 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Silkscreen, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { PageTransition } from "@/components/ui/PageTransition";
 import { cn } from "../src/lib/utils";
+import { siteProfile } from "@/lib/content/site";
+
+// Pixel display face for headings. Swap this one import to change the whole
+// display voice of the site — nothing else references the family by name.
+const display = Silkscreen({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const serif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteProfile.url),
   title: {
-    default: "Aristide WAFO – Cloud & DevOps Engineer Portfolio",
-    template: "%s | Aristide WAFO Portfolio",
+    default: `${siteProfile.name} — Cloud & DevOps Engineer`,
+    template: `%s · ${siteProfile.name}`,
   },
-  description:
-    "Professional portfolio of Aristide WAFO, Cloud & DevOps Engineer. Discover my projects, AWS and Terraform certifications, and my experience in development, cloud and CI/CD.",
+  description: siteProfile.description,
   openGraph: {
-    title: "Aristide WAFO – Cloud & DevOps Engineer Portfolio",
-    description:
-      "Discover my projects, Cloud expertise (AWS, Terraform) and DevOps achievements. Passionate about automation, cloud architecture and innovation.",
-    url: "https://aristidewafo.me",
-    siteName: "Aristide WAFO – Portfolio",
+    title: `${siteProfile.name} — Cloud & DevOps Engineer`,
+    description: siteProfile.description,
+    url: siteProfile.url,
+    siteName: `${siteProfile.name} — Portfolio`,
     locale: "en_US",
     type: "website",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  metadataBase: new URL("https://aristidewafo.vercel.app/"),
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -40,12 +55,19 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body
         className={cn(
-          GeistSans.variable,
-          GeistMono.variable,
-          "bg-background text-foreground font-sans min-h-dvh antialiased"
+          display.variable,
+          serif.variable,
+          mono.variable,
+          "min-h-dvh bg-background font-serif text-foreground antialiased"
         )}
       >
-        {/* Google Analytics */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border focus:border-primary focus:bg-background focus:px-3 focus:py-2 focus:font-mono focus:text-xs focus:uppercase"
+        >
+          Skip to content
+        </a>
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4SD9W3LE8L"
           strategy="afterInteractive"
@@ -60,8 +82,8 @@ export default function RootLayout({
         </Script>
 
         <Header />
-        <main id="main" role="main" className="relative">
-          <PageTransition>{children}</PageTransition>
+        <main id="main" role="main" className="animate-enter relative">
+          {children}
         </main>
         <Footer />
       </body>

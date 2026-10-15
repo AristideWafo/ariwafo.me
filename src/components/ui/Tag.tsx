@@ -3,7 +3,12 @@ import React from 'react';
 
 export function Tag({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <span className={cn('inline-flex items-center rounded border border-border/60 bg-accent/40 px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground', className)}>
+    <span
+      className={cn(
+        'inline-flex items-center border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground',
+        className
+      )}
+    >
       {children}
     </span>
   );

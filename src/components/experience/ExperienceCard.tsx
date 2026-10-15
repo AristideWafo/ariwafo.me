@@ -3,21 +3,21 @@ import { Experience } from '@/lib/content/experience'
 import ExperienceItem from './ExperienceItem'
 
 type ExperienceCardProps = {
-  title?: string
   items: Experience[]
+  /** Numbers each row, for the full history page. */
+  numbered?: boolean
 }
 
-export default function ExperienceCard({ items }: ExperienceCardProps) {
+export default function ExperienceCard({ items, numbered = false }: ExperienceCardProps) {
   return (
-    <div className="">
-      <ul className="space-y-2">
-        {items.map((item, index) => (
-          <ExperienceItem 
-            key={`${item.company}-${index}`}
-            {...item}
-          />
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {items.map((item, index) => (
+        <ExperienceItem
+          key={`${item.company}-${index}`}
+          index={numbered ? index : undefined}
+          {...item}
+        />
+      ))}
+    </ul>
   )
 }

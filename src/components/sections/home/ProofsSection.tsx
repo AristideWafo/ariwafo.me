@@ -1,48 +1,70 @@
-"use client"
-
 import React from "react";
+import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Kpi } from "@/components/ui/Kpi";
 import ExperienceCard from "@/components/experience/ExperienceCard";
 import { work } from "@/lib/content/experience";
-import Link from "next/link";
+import { projects } from "@/lib/content/projects/data";
+import { externalArticles } from "@/lib/content/articles/data";
 
-const kpis = [
-  {
-    value: "1",
-    label: "Years of experience",
-    note: "Including apprenticeship and professional projects",
-  },
-  {
-    value: "4",
-    label: "Projects delivered",
-    note: "Cloud, DevOps, and software development projects",
-  },
-];
-
+/** Years since the first role, so the figure never goes stale in the copy. */
+function yearsSince(earliest: string) {
+  const [year, month] = earliest.split("-").map(Number);
+  const months =
+    (new Date().getFullYear() - year) * 12 + (new Date().getMonth() + 1 - month);
+  return Math.max(1, Math.floor(months / 12));
+}
 
 export function ProofsSection() {
-  // Affiche seulement la première expérience (la plus récente)
-  const displayedExperiences = work.slice(0, 1);
-  
+  const earliest = work.map((w) => w.start).sort()[0];
+
+  const kpis = [
+    {
+      value: `${yearsSince(earliest)}+`,
+      label: "Years in the field",
+      note: "Backend, then cloud, then the delivery and observability side of it.",
+    },
+    {
+      value: work.length,
+      label: "Engineering teams",
+      note: "Banking, industrial software, humanitarian, consulting.",
+    },
+    {
+      value: projects.length,
+      label: "Public projects",
+      note: "Terraform, pipelines and teardown scripts you can read on GitHub.",
+    },
+    {
+      value: externalArticles.length,
+      label: "Articles published",
+      note: "Mostly on Medium, on CI/CD, DORA metrics and AWS security.",
+    },
+  ];
+
   return (
-    <Section>
-      <div className="space-y-10 p-6 rounded-lg border border-border/60 shadow-sm">
-        <div className="grid gap-6 md:grid-cols-3" aria-label="Key metrics">
-          {kpis.map((k) => (
-            <Kpi key={k.label} value={k.value} label={k.label} note={k.note} />
-          ))}
-        </div>
-        <div>
-          <ExperienceCard items={displayedExperiences} />
-          <Link 
+    <Section
+      label="FIG_003 · Track record"
+      title="Receipts"
+      intro="Numbers that come from the rest of this site, not from a slide."
+    >
+      <div className="grid gap-8 border border-border p-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        {kpis.map((kpi) => (
+          <Kpi key={kpi.label} {...kpi} />
+        ))}
+      </div>
+
+      <div className="mt-10 border border-border">
+        <div className="flex items-baseline justify-between gap-4 border-b border-border bg-surface/60 px-5 py-3">
+          <span className="label">Most recent</span>
+          <Link
             href="/experiences"
-            className="block text-sm text-center w-full mt-2 py-2 text-muted-foreground hover:text-foreground transition-all duration-300 cursor-pointer group"
+            className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:underline"
           >
-            <span className="group-hover:translate-x-1 inline-block transition-transform duration-300">
-              Voir toutes mes expériences →
-            </span>
+            All experience ↗
           </Link>
+        </div>
+        <div className="p-3 sm:p-5">
+          <ExperienceCard items={work.slice(0, 1)} />
         </div>
       </div>
     </Section>
