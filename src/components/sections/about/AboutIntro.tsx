@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button";
 import { siteProfile } from "@/lib/content/site";
 
 export function AboutIntro() {
@@ -13,9 +14,11 @@ export function AboutIntro() {
         <p>
           I&apos;m {siteProfile.name}, a cloud and DevOps engineer based in{" "}
           {siteProfile.location}. I work on observability at Société Générale,
-          where I deploy monitoring across Kubernetes clusters, Docker
-          containers and EC2 instances, and agree SLI/SLO targets with the teams
-          who own the services.
+          covering 50+ production microservices on Azure Kubernetes Service,
+          agreeing SLI/SLO targets with the teams who own the services, and
+          building an AI-assisted SRE agent that correlates metrics, logs and
+          traces so on-call engineers start from a hypothesis instead of a wall
+          of dashboards.
         </p>
         <p>
           I came to infrastructure from the backend side. I spent two years
@@ -43,6 +46,15 @@ export function AboutIntro() {
         {siteProfile.availability}. If your deploys are scary, I&apos;d like to
         hear about it.
       </p>
+
+      <Button
+        href={siteProfile.resumePath}
+        download
+        variant="primary"
+        className="mt-8"
+      >
+        Download CV ↓
+      </Button>
     </div>
   );
 }

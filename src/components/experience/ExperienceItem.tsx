@@ -13,6 +13,8 @@ const PREVIEW_BULLETS = 2;
 export default function ExperienceItem({
   company,
   role,
+  type,
+  location,
   description,
   techStack,
   start,
@@ -53,7 +55,22 @@ export default function ExperienceItem({
                 company
               )}
             </h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">{role}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {role}
+              {type && (
+                <>
+                  {" · "}
+                  <span className="font-mono text-xs uppercase tracking-[0.1em]">
+                    {type}
+                  </span>
+                </>
+              )}
+            </p>
+            {location && (
+              <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                {location}
+              </p>
+            )}
           </div>
         </div>
 

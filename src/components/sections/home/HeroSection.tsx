@@ -63,6 +63,15 @@ export function HeroSection() {
               >
                 LinkedIn ↗
               </Button>
+              <Button
+                href={siteProfile.resumePath}
+                download
+                variant="outline"
+                size="lg"
+                className="sm:col-span-2"
+              >
+                Download CV ↓
+              </Button>
             </div>
 
             <CopyBlock
@@ -114,8 +123,8 @@ export function HeroSection() {
               </div>
               <hr className="my-4 border-dashed border-border" />
               <p className="italic leading-relaxed text-muted-foreground">
-                SLI/SLO frameworks, Prometheus and Grafana across Kubernetes,
-                Docker and EC2.
+                SLI/SLO frameworks and an AI-assisted SRE agent, across 50+
+                microservices on Azure Kubernetes Service.
               </p>
               <Link
                 href="/experiences"

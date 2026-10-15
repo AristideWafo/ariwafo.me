@@ -6,6 +6,7 @@ export const siteProfile = {
   email: "wafoaristide@gmail.com",
   url: "https://ariwafo.me",
   githubUser: "AristideWafo",
+  resumePath: "/Aristide-WAFO-Cloud-DevOps-Engineer.pdf",
   description:
     "Cloud & DevOps engineer. I build the delivery and observability plumbing that lets teams ship daily instead of weekly — Terraform, CI/CD, Prometheus and Grafana.",
   tagline:
@@ -52,7 +53,7 @@ export const certifications: Certification[] = [
 export const stackGroups: { group: string; items: string[] }[] = [
   {
     group: "Cloud & IaC",
-    items: ["AWS", "Terraform", "Ansible", "ECS Fargate", "EC2"],
+    items: ["AWS", "Azure", "Terraform", "Ansible", "ECS Fargate"],
   },
   {
     group: "Delivery",
