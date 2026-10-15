@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
+import { CardGrid } from "@/components/ui/CardGrid";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { featuredProjects } from "@/lib/content/projects/data";
 
@@ -13,11 +14,11 @@ export function FeaturedProjectsSection() {
       title="Things I built and shipped"
       intro="Infrastructure you can clone and run. Each one is public, with the Terraform, the pipeline and the teardown included."
     >
-      <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+      <CardGrid>
         {featuredProjects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
-      </div>
+      </CardGrid>
 
       <Link
         href="/projects"
