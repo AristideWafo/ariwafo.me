@@ -2,35 +2,27 @@ import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import ExperienceCard from "@/components/experience/ExperienceCard";
 import { work } from "@/lib/content/experience";
+import { buildMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "My Experiences - Aristide WAFO",
+export const metadata: Metadata = buildMetadata({
+  title: "Experience",
   description:
-    "Discover my professional journey and experiences as a Cloud & DevOps Engineer.",
-};
+    "Observability at Société Générale, backend and DevOps work at Astree Software, Solidarity World and SCI2M.",
+  path: "/experiences",
+});
 
 export default function ExperiencesPage() {
   return (
-    <main className="min-h-screen">
-      {/* Header avec navigation */}
-      <Section className="pb-0 md:pb-0">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            My Experiences
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl">
-            Discover my professional journey and the projects I&apos;ve worked
-            on as a Cloud & DevOps Engineer.
-          </p>
-        </div>
-      </Section>
-
-      {/* Expériences complètes */}
-      <Section className="pb-20">
-        <div className="max-w-4xl">
-          <ExperienceCard items={work} />
-        </div>
-      </Section>
-    </main>
+    <Section
+      as="h1"
+      label="FIG_020 · History"
+      title="Experience"
+      intro="Where I have worked, and what actually changed while I was there."
+      divider={false}
+    >
+      <div className="border border-border px-5 sm:px-8">
+        <ExperienceCard items={work} numbered />
+      </div>
+    </Section>
   );
 }

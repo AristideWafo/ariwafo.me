@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { siteProfile } from '@/lib/content/site';
 
 interface BuildMetaOptions {
   title?: string;
@@ -9,29 +10,27 @@ interface BuildMetaOptions {
   noIndex?: boolean;
 }
 
-const site = {
-  name: 'Portfolio',
-  baseUrl: 'https://aristidewafo.vercel.app/', // replace on deploy
-  defaultDescription: 'Minimal cloud & DevOps engineer portfolio (placeholder content).'
-};
-
 export function buildMetadata(opts: BuildMetaOptions = {}): Metadata {
-  const title = opts.title ? `${opts.title} | ${site.name}` : `${site.name}`;
-  const url = opts.path ? `${site.baseUrl}${opts.path}` : site.baseUrl;
-  const description = opts.description ?? site.defaultDescription;
+  // Bare title: the root layout's `template` adds the site name, so suffixing
+  // here would print it twice.
+  const title = opts.title;
+  const base = siteProfile.url.replace(/\/$/, '');
+  const url = opts.path ? `${base}${opts.path}` : base;
+  const description = opts.description ?? siteProfile.description;
   const images = opts.ogImage ? [opts.ogImage] : [];
+
   return {
     title,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: title ? `${title} · ${siteProfile.name}` : siteProfile.name,
       description,
       url,
-      siteName: site.name,
+      siteName: `${siteProfile.name} — Portfolio`,
       type: opts.type ?? 'website',
-      images
+      images,
     },
-    robots: opts.noIndex ? { index: false, follow: false } : { index: true, follow: true }
+    robots: opts.noIndex ? { index: false, follow: false } : { index: true, follow: true },
   };
 }

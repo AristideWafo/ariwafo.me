@@ -6,30 +6,34 @@ type DateRangeProps = {
   duration?: string
 }
 
+const isOngoing = (value?: string) => !value || value.toLowerCase() === 'present'
+
 export function formatDate(dateString: string): string {
-  if (dateString === 'present') return 'Present'
-  
+  if (isOngoing(dateString)) return 'Present'
+
   const [year, month] = dateString.split('-')
+  // Anything that is not a YYYY-MM pair is shown as-is rather than as "undefined / x".
+  if (!year || !month) return dateString
   return `${month} / ${year}`
 }
 
 export default function DateRange({ start, end, duration }: DateRangeProps) {
-  // Use provided duration if available
   if (duration) {
-    return <span className="text-sm text-neutral-500 dark:text-neutral-400">{duration}</span>
+    return (
+      <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
+        {duration}
+      </span>
+    )
   }
-  
-  const startFormatted = formatDate(start)
-  const endFormatted = end ? formatDate(end) : 'Present'
-  
+
   return (
-    <span className="text-sm text-neutral-500 dark:text-neutral-400">
-      <time dateTime={start}>{startFormatted}</time>
+    <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
+      <time dateTime={start}>{formatDate(start)}</time>
       {' — '}
-      {end && end !== 'present' ? (
-        <time dateTime={end}>{endFormatted}</time>
+      {isOngoing(end) ? (
+        <span className="text-primary">Present</span>
       ) : (
-        endFormatted
+        <time dateTime={end}>{formatDate(end!)}</time>
       )}
     </span>
   )

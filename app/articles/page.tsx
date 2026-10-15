@@ -4,128 +4,107 @@ import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ExternalArticleCard } from "@/components/articles/ExternalArticleCard";
-import {
-  internalArticles,
-  externalArticles,
-} from "@/src/lib/content/articles/data";
+import { internalArticles, externalArticles } from "@/lib/content/articles/data";
 import { cn } from "@/lib/utils";
 
 export default function ArticlesPage() {
   const [selectedTag, setSelectedTag] = useState<string>("All");
 
-  // Extraire tous les tags uniques des articles
   const allTags = useMemo(() => {
     const tagsSet = new Set<string>();
-
-    // Tags des articles internes
-    internalArticles.forEach((article) => {
-      article.tags?.forEach((tag) => tagsSet.add(tag));
-    });
-
-    // Tags des articles externes
-    externalArticles.forEach((article) => {
-      article.tags?.forEach((tag) => tagsSet.add(tag));
-    });
-
+    internalArticles.forEach((a) => a.tags?.forEach((t) => tagsSet.add(t)));
+    externalArticles.forEach((a) => a.tags?.forEach((t) => tagsSet.add(t)));
     return ["All", ...Array.from(tagsSet).sort()];
   }, []);
 
-  // Filtrer les articles par tag
-  const filteredInternalArticles = useMemo(() => {
-    if (selectedTag === "All") return internalArticles;
-    return internalArticles.filter((article) =>
-      article.tags?.includes(selectedTag)
-    );
-  }, [selectedTag]);
+  const filteredInternal = useMemo(
+    () =>
+      selectedTag === "All"
+        ? internalArticles
+        : internalArticles.filter((a) => a.tags?.includes(selectedTag)),
+    [selectedTag]
+  );
 
-  const filteredExternalArticles = useMemo(() => {
-    if (selectedTag === "All") return externalArticles;
-    return externalArticles.filter((article) =>
-      article.tags?.includes(selectedTag)
-    );
-  }, [selectedTag]);
+  const filteredExternal = useMemo(
+    () =>
+      selectedTag === "All"
+        ? externalArticles
+        : externalArticles.filter((a) => a.tags?.includes(selectedTag)),
+    [selectedTag]
+  );
 
-  const hasResults =
-    filteredInternalArticles.length > 0 || filteredExternalArticles.length > 0;
+  const hasResults = filteredInternal.length > 0 || filteredExternal.length > 0;
 
   return (
-    <div className="min-h-screen">
-      {/* Header Section */}
-      <Section className="pb-0 md:pb-0">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Articles & Resources
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl">
-            Technical guides, experience feedback and resources on cloud
-            infrastructure, DevOps and modern technologies.
-          </p>
-        </div>
-
-        {/* Tags Filter */}
-        <div className="flex flex-wrap gap-2 mt-8">
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setSelectedTag(tag)}
-              className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                selectedTag === tag
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
-              )}
-            >
-              {tag}
-            </button>
-          ))}
+    <>
+      <Section
+        as="h1"
+        label="FIG_030 · Writing"
+        title="Articles"
+        intro="Write-ups on CI/CD, DORA metrics, AWS security and the things that went wrong before they went right."
+        divider={false}
+        className="pb-0 md:pb-0"
+      >
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Filter articles by tag"
+        >
+          {allTags.map((tag) => {
+            const active = selectedTag === tag;
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setSelectedTag(tag)}
+                aria-pressed={active}
+                className={cn(
+                  "border px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                )}
+              >
+                {tag}
+              </button>
+            );
+          })}
         </div>
       </Section>
 
-      {/* Articles Content */}
       {!hasResults ? (
-        <Section>
-          <p className="text-center text-muted-foreground py-12">
-            No articles found for this tag.
+        <Section divider={false}>
+          <p className="border border-border p-10 text-center font-mono text-sm text-muted-foreground">
+            No articles tagged “{selectedTag}”.
           </p>
         </Section>
       ) : (
         <>
-          {/* Internal Articles Section */}
-          {filteredInternalArticles.length > 0 && (
-            <Section>
-              <div className="space-y-6">
-                <div className="grid gap-8 md:grid-cols-2">
-                  {filteredInternalArticles.map((article) => (
-                    <ArticleCard key={article.id} article={article} featured />
-                  ))}
-                </div>
+          {filteredInternal.length > 0 && (
+            <Section divider={false}>
+              <div className="grid gap-px border border-border bg-border md:grid-cols-2">
+                {filteredInternal.map((article) => (
+                  <ArticleCard key={article.id} article={article} featured />
+                ))}
               </div>
             </Section>
           )}
 
-          {/* External Articles Section */}
-          {filteredExternalArticles.length > 0 && (
-            <Section>
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-semibold">External Articles</h2>
-                  <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
-                    {filteredExternalArticles.length}
-                  </span>
-                </div>
-                <p className="text-muted-foreground text-sm">
-                  Find my publications on Medium, Dev.to and LinkedIn
-                </p>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredExternalArticles.map((article) => (
-                    <ExternalArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
+          {filteredExternal.length > 0 && (
+            <Section
+              label={`FIG_031 · Published elsewhere · ${filteredExternal.length}`}
+              title="On Medium, LinkedIn and beyond"
+              divider={filteredInternal.length > 0}
+            >
+              <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+                {filteredExternal.map((article) => (
+                  <ExternalArticleCard key={article.id} article={article} />
+                ))}
               </div>
             </Section>
           )}
         </>
       )}
-    </div>
+    </>
   );
 }

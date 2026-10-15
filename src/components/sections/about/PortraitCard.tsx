@@ -1,16 +1,23 @@
-import Image from 'next/image';
+import Image from "next/image";
+import { Plate } from "@/components/ui/Plate";
+import { siteProfile } from "@/lib/content/site";
 
 export function PortraitCard() {
   return (
-    <div className="rounded-2xl shadow-xs overflow-hidden rotate-3 bg-muted/50 border border-border/50 w-fit">
+    <Plate
+      figure="FIG_041 · Portrait"
+      note={siteProfile.location}
+      caption={`${siteProfile.name} · ${siteProfile.role}`}
+    >
       <Image
         src="/pictures/picture1.jpg"
-        alt="Portrait of the site owner (placeholder)"
-        width={350}
-        height={350}
+        alt={`${siteProfile.name}, ${siteProfile.role}`}
+        width={400}
+        height={400}
         priority
-        className="w-[350px] h-[350px] object-cover scale-100"
+        sizes="(max-width: 1024px) 100vw, 400px"
+        className="h-auto w-full object-cover grayscale transition-all duration-500 hover:grayscale-0"
       />
-    </div>
+    </Plate>
   );
 }
