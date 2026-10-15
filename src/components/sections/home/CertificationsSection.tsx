@@ -10,7 +10,7 @@ export function CertificationsSection() {
       <Container>
         <div className="border-l-2 border-primary border-y border-r border-y-border border-r-border bg-surface/40 p-6 md:p-8">
           <div className="grid gap-8 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-10">
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               {certifications.map((cert) => (
                 <a
                   key={cert.code}
