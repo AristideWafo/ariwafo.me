@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import ExperienceCard from "@/components/experience/ExperienceCard";
+import { CareerTimeline } from "@/components/experience/CareerTimeline";
 import { work } from "@/lib/content/experience";
 import { talks } from "@/lib/content/speaking";
 import { siteProfile } from "@/lib/content/site";
@@ -35,6 +36,10 @@ export default function ExperiencesPage() {
         <Button href={siteProfile.resumePath} download variant="primary">
           Download CV ↓
         </Button>
+
+        <div className="mt-10">
+          <CareerTimeline items={work} />
+        </div>
 
         <div className="mt-10 border border-border px-5 sm:px-8">
           <ExperienceCard items={work} numbered />
