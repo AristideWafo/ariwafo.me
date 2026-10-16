@@ -139,7 +139,73 @@
   }
 }
 
+@layer components {
+  /* Figure animation.
+     The whole data layer — curves, area, markers and their labels — lives in
+     one group carrying .fig-float, so the markers cannot drift off the lines:
+     they share a single transform. The grid and axes stay put, which is what
+     makes the drift read as the data breathing against a fixed frame.
+     Resting state below is the finished state, so with motion reduced (or no
+     CSS animation at all) the figure is simply drawn. */
+  .fig-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .fig-mark {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fig-float {
+      animation: fig-float 7s ease-in-out infinite;
+    }
+
+    .fig-draw {
+      animation: fig-draw 1.6s ease-out backwards;
+    }
+
+    .fig-area {
+      animation: fig-fade 1s ease-out 0.9s backwards;
+    }
+
+    .fig-mark {
+      animation: fig-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+  }
+}
+
 @layer utilities {
+  @keyframes fig-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  @keyframes fig-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fig-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+  }
+
+  @keyframes fig-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
   /* Replaces the old JS page transition: runs from CSS, so content is never
      left invisible when hydration is slow or JS is off. */
   .animate-enter {
