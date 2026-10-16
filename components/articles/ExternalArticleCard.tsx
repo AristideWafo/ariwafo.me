@@ -60,7 +60,7 @@ export function ExternalArticleCard({ article }: ExternalArticleCardProps) {
 
   if (loading) {
     return (
-      <article className="flex h-full animate-pulse flex-col bg-background p-6">
+      <article className="flex h-full animate-pulse flex-col border-b border-r border-border bg-background p-6">
         <div className="h-3 w-24 bg-border" />
         <div className="mt-4 h-5 w-3/4 bg-border" />
         <div className="mt-3 h-4 w-full bg-border" />
@@ -73,7 +73,7 @@ export function ExternalArticleCard({ article }: ExternalArticleCardProps) {
   if (!metadata) return null;
 
   return (
-    <article className="group relative flex h-full flex-col bg-background p-6 transition-colors hover:bg-surface/50">
+    <article className="group relative flex h-full flex-col border-b border-r border-border bg-background p-6 transition-colors hover:bg-surface/50">
       <div className="flex items-baseline justify-between gap-4">
         <span className="label-accent">{metadata.platform}</span>
         <span className="label">External</span>

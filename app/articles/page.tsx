@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
+import { CardGrid } from "@/components/ui/CardGrid";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ExternalArticleCard } from "@/components/articles/ExternalArticleCard";
 import { internalArticles, externalArticles } from "@/lib/content/articles/data";
@@ -82,11 +83,11 @@ export default function ArticlesPage() {
         <>
           {filteredInternal.length > 0 && (
             <Section divider={false}>
-              <div className="grid gap-px border border-border bg-border md:grid-cols-2">
+              <CardGrid cols={2}>
                 {filteredInternal.map((article) => (
                   <ArticleCard key={article.id} article={article} featured />
                 ))}
-              </div>
+              </CardGrid>
             </Section>
           )}
 
@@ -96,11 +97,11 @@ export default function ArticlesPage() {
               title="On Medium, LinkedIn and beyond"
               divider={filteredInternal.length > 0}
             >
-              <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+              <CardGrid>
                 {filteredExternal.map((article) => (
                   <ExternalArticleCard key={article.id} article={article} />
                 ))}
-              </div>
+              </CardGrid>
             </Section>
           )}
         </>

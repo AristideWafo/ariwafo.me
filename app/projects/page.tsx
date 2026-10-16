@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
+import { CardGrid } from "@/components/ui/CardGrid";
 import { projects } from "@/lib/content/projects/data";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { cn } from "@/lib/utils";
@@ -59,11 +60,11 @@ export default function ProjectsPage() {
 
       <Section divider={false}>
         {filteredProjects.length > 0 ? (
-          <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+          <CardGrid>
             {filteredProjects.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
             ))}
-          </div>
+          </CardGrid>
         ) : (
           <p className="border border-border p-10 text-center font-mono text-sm text-muted-foreground">
             No projects tagged “{selectedTag}”.

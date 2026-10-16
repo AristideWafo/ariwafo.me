@@ -16,7 +16,7 @@ const formatDate = (dateString: string) =>
 
 export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   return (
-    <article className="group relative flex h-full flex-col bg-background p-6 transition-colors hover:bg-surface/50">
+    <article className="group relative flex h-full flex-col border-b border-r border-border bg-background p-6 transition-colors hover:bg-surface/50">
       <div className="flex items-baseline justify-between gap-4">
         <span className="label-accent">
           {formatDate(article.date)} · {article.readTime} min read
