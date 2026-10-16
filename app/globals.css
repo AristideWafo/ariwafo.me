@@ -27,7 +27,7 @@
     --ring: 236 91% 57%;
     --radius: 0px;
 
-    --dot: 48 14% 80%;
+    --dot: 48 12% 88%;
   }
 
   .dark {
@@ -111,15 +111,16 @@
     border-style: solid;
   }
 
+  /* Brackets sit flush on the frame's own line rather than outside it. */
   .plate::before {
-    top: -1px;
-    left: -1px;
+    top: 0;
+    left: 0;
     border-width: 2px 0 0 2px;
   }
 
   .plate::after {
-    bottom: -1px;
-    right: -1px;
+    bottom: 0;
+    right: 0;
     border-width: 0 2px 2px 0;
   }
 
@@ -138,7 +139,72 @@
   }
 }
 
+@layer components {
+  /* Figure animation.
+     .fig-flex bends each line between its fixed endpoints: paths morph to
+     --fig-d, markers translate by --fig-dx/--fig-dy with the same timing, so
+     they stay on the line. Gated on CSS `d` support (no Safari): without it
+     nothing flexes, rather than markers moving off a static line.
+     Resting state below is the finished state, so with motion reduced (or no
+     CSS animation at all) the figure is simply drawn. */
+  .fig-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .fig-mark {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (d: path("M0 0")) {
+      .fig-flex {
+        animation: fig-flex 3.5s ease-in-out infinite alternate;
+      }
+    }
+
+    .fig-draw {
+      animation: fig-draw 1.6s ease-out backwards;
+    }
+
+    .fig-area {
+      animation: fig-fade 1s ease-out 0.9s backwards;
+    }
+
+    .fig-mark {
+      animation: fig-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+  }
+}
+
 @layer utilities {
+  @keyframes fig-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  @keyframes fig-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fig-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+  }
+
+  @keyframes fig-flex {
+    to {
+      d: var(--fig-d);
+      transform: translate(var(--fig-dx, 0), var(--fig-dy, 0));
+    }
+  }
+
   /* Replaces the old JS page transition: runs from CSS, so content is never
      left invisible when hydration is slow or JS is off. */
   .animate-enter {

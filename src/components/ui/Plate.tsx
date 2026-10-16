@@ -21,13 +21,12 @@ export function Plate({
 }: PropsWithChildren<PlateProps>) {
   return (
     <figure className={cn("space-y-3", className)}>
-      <div className="plate">
-        <div className="mb-4 flex items-baseline justify-between gap-4">
-          <span className="label">{figure}</span>
-          {note && <span className="label-accent">{note}</span>}
-        </div>
-        {children}
+      {/* The caption line rides above the frame, the way a plate is titled. */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <span className="label">{figure}</span>
+        {note && <span className="label-accent">{note}</span>}
       </div>
+      <div className="plate">{children}</div>
       {caption && (
         <figcaption className="text-center font-mono text-[11px] leading-relaxed text-muted-foreground">
           {caption}

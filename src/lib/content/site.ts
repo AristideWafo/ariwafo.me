@@ -39,6 +39,14 @@ export const certifications: Certification[] = [
     fallback: "SAA",
   },
   {
+    code: "DVA-C02",
+    label: "Developer — Associate",
+    issuer: "Amazon Web Services",
+    url: "https://www.credly.com/badges/d9d77928-cfb1-4f4f-99d9-35f99a615b42/public_url",
+    image: "/certifications/aws-developer.png",
+    fallback: "DVA",
+  },
+  {
     code: "HCTA0-003",
     label: "Terraform Associate",
     issuer: "HashiCorp",
