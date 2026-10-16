@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "media.licdn.com",
-      },
-      {
-        protocol: "https",
         hostname: "raw.githubusercontent.com",
       },
       // Domaines pour les articles externes
