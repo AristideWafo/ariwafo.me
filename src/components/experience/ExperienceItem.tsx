@@ -5,6 +5,7 @@ import { Experience } from "@/lib/content/experience";
 import CompanyLogo from "./CompanyLogo";
 import DateRange from "./DateRange";
 import { Tag } from "@/components/ui/Tag";
+import { experienceSlug } from "./slug";
 
 type ExperienceItemProps = Experience & { index?: number };
 
@@ -31,7 +32,12 @@ export default function ExperienceItem({
   const visible = expanded ? bullets : bullets.slice(0, PREVIEW_BULLETS);
 
   return (
-    <li className="border-b border-border py-6 last:border-b-0">
+    <li
+      id={experienceSlug(company)}
+      // scroll-mt clears the sticky header; the :target tint is what the
+      // timeline bars above select.
+      className="scroll-mt-24 border-b border-border py-6 transition-colors last:border-b-0 target:bg-surface/70"
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-4">
           <CompanyLogo src={logo} alt={company} />
