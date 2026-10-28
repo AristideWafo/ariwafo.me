@@ -10,7 +10,7 @@ export function LatestWritingSection() {
   if (latest.length === 0) return null;
 
   return (
-    <Section label="FIG_004 · Latest writing" title="Notes from the pipeline">
+    <Section label="FIG_003 · Latest writing" title="Notes from the pipeline">
       <ul className="divide-y divide-border border-y border-border">
         {latest.map((article) => (
           <li key={article.id}>

@@ -10,7 +10,7 @@ export function FeaturedProjectsSection() {
 
   return (
     <Section
-      label="FIG_003 · Selected work"
+      label="FIG_002 · Selected work"
       title="Things I built and shipped"
       intro="Infrastructure you can clone and run. Each one is public, with the Terraform, the pipeline and the teardown included."
     >

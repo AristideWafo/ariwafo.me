@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { Plate } from "@/components/ui/Plate";
-import { DeliveryCurve } from "./DeliveryCurve";
 import { siteProfile, certifications } from "@/lib/content/site";
 
 export function HeroSection() {
@@ -79,8 +77,8 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* ── Right: status card + figure plate ────────────────────── */}
-          <div className="space-y-10">
+          {/* ── Right: status card ────────────────────── */}
+          <div className="lg:pt-3">
             <div className="border-l-2 border-primary border-y border-r border-y-border border-r-border py-5 pl-5 pr-5">
               <div className="mb-4 flex items-baseline justify-between gap-4">
                 <span className="label">Currently</span>
@@ -125,20 +123,6 @@ export function HeroSection() {
                 Full history ↗
               </Link>
             </div>
-
-            <Plate
-              figure="FIG_001 · Delivery frequency"
-              note="deploys vs time"
-              caption={
-                <>
-                  Plate 1 of 1. Automated pipelines compound.
-                  <br />
-                  Manual releases plateau.
-                </>
-              }
-            >
-              <DeliveryCurve />
-            </Plate>
           </div>
         </div>
       </Container>

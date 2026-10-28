@@ -30,7 +30,7 @@ const tools = (group: string) =>
 export function PillarsSection() {
   return (
     <Section
-      label="FIG_002 · How I work"
+      label="FIG_001 · How I work"
       title="Three things I get paid for"
       intro="Not a tool list. The three loops that decide whether a team ships safely or spends its week firefighting."
     >
