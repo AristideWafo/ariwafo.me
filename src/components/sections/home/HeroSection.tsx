@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { CopyBlock } from "@/components/ui/CopyBlock";
 import { Plate } from "@/components/ui/Plate";
 import { DeliveryCurve } from "./DeliveryCurve";
 import { siteProfile, certifications } from "@/lib/content/site";
@@ -42,44 +41,37 @@ export function HeroSection() {
               <Button href="/projects" variant="primary" size="lg">
                 See the work
               </Button>
-              <Button href="/contact" variant="secondary" size="lg">
-                Start a conversation
-              </Button>
-              <Button
-                href={`https://github.com/${siteProfile.githubUser}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline"
-                size="lg"
-              >
-                GitHub ↗
-              </Button>
-              <Button
-                href={siteProfile.socials.find((s) => s.label === "LinkedIn")!.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline"
-                size="lg"
-              >
-                LinkedIn ↗
-              </Button>
               <Button
                 href={siteProfile.resumePath}
                 download
-                variant="outline"
+                variant="secondary"
                 size="lg"
-                className="sm:col-span-2"
               >
                 Download CV ↓
               </Button>
             </div>
 
-            <CopyBlock
-              className="mt-8"
-              label="Run my infrastructure yourself"
-              command={`git clone https://github.com/${siteProfile.githubUser}/bastion-host.git`}
-              hint="terraform apply provisions, tests and tears down the whole stack."
-            />
+            <p className="mt-5 flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              <a
+                href={`https://github.com/${siteProfile.githubUser}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary hover:underline"
+              >
+                GitHub ↗
+              </a>
+              <a
+                href={siteProfile.socials.find((s) => s.label === "LinkedIn")!.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary hover:underline"
+              >
+                LinkedIn ↗
+              </a>
+              <Link href="/contact" className="hover:text-primary hover:underline">
+                Contact
+              </Link>
+            </p>
 
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Every project below is public: read the Terraform, the pipelines

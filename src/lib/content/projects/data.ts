@@ -47,7 +47,6 @@ export const projects: Project[] = [
     ],
     tags: ["Infrastructure", "AWS", "Terraform", "CI/CD", "Automation"],
     link: "https://github.com/AristideWafo/bastion-host",
-    featured: true,
   },  {
     id: "ai-bot--review",
     title: "AI-Powered Code Review Bot",
@@ -62,7 +61,6 @@ export const projects: Project[] = [
     ],
     tags: ["AI", "DevOps", "Automation", "Code Quality"],
     link: "https://github.com/AristideWafo/ai-bot--review",
-    featured: true,
   },{
     id: "aws-devops-agent",
     title: "AWS DevOps Agent",
