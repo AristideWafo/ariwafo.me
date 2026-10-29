@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     description: article.meta.excerpt,
     path: `/articles/${id}`,
     type: "article",
+    ogImage: `/articles/${id}/og`,
   });
 }
 
