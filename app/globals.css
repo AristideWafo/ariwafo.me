@@ -25,6 +25,7 @@
     --destructive: 4 74% 49%;
     --destructive-foreground: 50 27% 96%;
     --ring: 236 91% 57%;
+    --warning: 38 92% 38%;
     --radius: 0px;
 
     --dot: 48 12% 90.5%;
@@ -51,6 +52,7 @@
     --destructive: 4 70% 58%;
     --destructive-foreground: 225 8% 9%;
     --ring: 236 100% 72%;
+    --warning: 38 92% 60%;
 
     --dot: 225 6% 20%;
   }
@@ -226,5 +228,17 @@
     .animate-enter {
       animation: none;
     }
+  }
+}
+
+@layer components {
+  /* Shiki emits both themes as CSS variables (defaultColor: false); pick one here. */
+  .prose pre.shiki,
+  .prose pre.shiki span {
+    color: var(--shiki-light);
+  }
+  .dark .prose pre.shiki,
+  .dark .prose pre.shiki span {
+    color: var(--shiki-dark);
   }
 }

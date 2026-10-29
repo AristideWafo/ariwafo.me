@@ -1,0 +1,90 @@
+---
+title: "Automated DNS failover with a small Go daemon"
+date: "2026-10-29"
+excerpt: "A Go daemon that watches primary and secondary HTTP endpoints and flips a Cloudflare DNS record when the primary fails, then restores it once the primary is stable."
+tags: ["Go", "DNS", "Cloudflare", "DevOps"]
+repo: dns-failover
+draft: true
+---
+
+{/* DRAFT generated from the README — review before publishing */}
+
+<TLDR
+  problem="When a primary server stops answering, the DNS record has to be pointed at a secondary one, and back again later."
+  solution="A Go daemon checks each record's primary and secondary health URLs, flips the Cloudflare A record after consecutive failures, and restores it after the primary has been stable for a while."
+  result="Failover and restoration happen without manual DNS edits, and every decision is announced on Discord."
+/>
+
+## How it works
+
+For each configured record, the daemon checks the primary health URL on an interval. After a number of consecutive failures it looks at the secondary: if that one is healthy it moves the DNS record to the secondary IP, otherwise it raises an alert because there is nowhere to go.
+
+```text
+For each configured record:
+  Check primary every 30s
+  ├── OK → state NORMAL, counter reset
+  └── KO × 3 consecutive
+        ├── secondary OK → switch DNS to the secondary IP + Discord
+        └── secondary KO → Discord alert "nowhere to go"
+
+  In FAILOVER mode, keep checking the primary
+    └── OK for 5 stable minutes → restore DNS to the primary IP + Discord
+
+  Check the secondary in parallel
+    └── KO × 5 consecutive → Discord alert "degraded fallback"
+```
+
+## Configuration
+
+Everything lives in one YAML file: the Cloudflare token and zone, the Discord webhook, the thresholds and the list of records to supervise.
+
+```yaml
+cf_api_token: "your_cloudflare_token"
+cf_zone_id: "your_zone_id"
+discord_webhook_url: "https://discord.com/api/webhooks/xxx/yyy"
+
+check_interval: "30s"
+health_check_timeout: "5s"
+failover_threshold: 3
+secondary_alert_threshold: 5
+stability_duration: "5m"
+dry_run: false
+
+records:
+  - name: "api"
+    cf_record_name: "api.example.com"
+    primary_ip: "1.2.3.4"
+    primary_health_url: "https://api.example.com/health"
+    secondary_ip: "5.6.7.8"
+    secondary_health_url: "https://api-secondary.example.com/health"
+```
+
+<Callout type="info" title="Check the token first">
+  The Cloudflare token needs the `Zone > DNS > Edit` permission. The README suggests verifying it before deploying:
+</Callout>
+
+```bash
+curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+  -H "Authorization: Bearer YOUR_TOKEN" | jq .success
+# must return: true
+```
+
+## Deploying
+
+The daemon is compiled on the server and run as a systemd service.
+
+```bash
+go build -o dns-failover ./
+sudo useradd -r -s /bin/false dns-failover
+sudo cp dns-failover /opt/dns-failover/
+sudo cp config.yaml /opt/dns-failover/config.yaml
+sudo cp dns-failover.service /etc/systemd/system/
+sudo systemctl enable --now dns-failover
+journalctl -u dns-failover -f
+```
+
+## Rehearsing without risk
+
+<Callout type="warning" title="Dry-run first">
+  With `dry_run: true` the daemon runs normally, logs every decision and sends the Discord notifications, but never touches Cloudflare DNS. Discord messages are tagged `DRY-RUN` instead of `LIVE`.
+</Callout>
