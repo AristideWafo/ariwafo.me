@@ -3,9 +3,8 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { HeroSection } from "@/components/sections/home/HeroSection";
 import { PillarsSection } from "@/components/sections/home/PillarsSection";
 import { ProofsSection } from "@/components/sections/home/ProofsSection";
-import { StackSection } from "@/components/sections/home/StackSection";
 import { FeaturedProjectsSection } from "@/components/sections/home/FeaturedProjectsSection";
-import { CertificationsSection } from "@/components/sections/home/CertificationsSection";
+import { LatestWritingSection } from "@/components/sections/home/LatestWritingSection";
 import { ContactCtaSection } from "@/components/sections/home/ContactCtaSection";
 import { siteProfile } from "@/lib/content/site";
 
@@ -21,9 +20,8 @@ export default function HomePage() {
       <HeroSection />
       <PillarsSection />
       <ProofsSection />
-      <StackSection />
       <FeaturedProjectsSection />
-      <CertificationsSection />
+      <LatestWritingSection />
       <ContactCtaSection />
     </>
   );

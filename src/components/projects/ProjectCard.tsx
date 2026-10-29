@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Tag } from "@/components/ui/Tag";
+import { TagList } from "@/components/ui/TagList";
 import { Project } from "@/lib/content/projects/data";
 
 interface ProjectCardProps {
@@ -38,13 +38,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         {project.description}
       </p>
 
-      <ul className="mt-5 flex flex-wrap gap-2">
-        {project.technologies.map((tech) => (
-          <li key={tech}>
-            <Tag>{tech}</Tag>
-          </li>
-        ))}
-      </ul>
+      <TagList tags={project.tags.slice(0, 5)} basePath="/projects" />
 
       <p className="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors group-hover:text-primary">
         View source ↗
