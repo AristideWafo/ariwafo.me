@@ -8,15 +8,12 @@ interface Repo {
   html_url: string;
   topics?: string[];
   language: string | null;
-  fork: boolean;
-  archived: boolean;
-  created_at: string;
   pushed_at: string;
 }
 
 const PORTFOLIO_TOPIC = "portfolio";
 
-const prettify =(name: string) =>
+const prettify = (name: string) =>
   name.split(/[-_]+/).filter(Boolean).map(tagLabel).join(" ");
 
 const toProject = (name: string, link: string, description: string | null, tags: string[]): Project => ({
@@ -48,12 +45,8 @@ async function fetchRepos(): Promise<Repo[]> {
 export async function getProjects(): Promise<Project[]> {
   try {
     return (await fetchRepos())
-      .filter(
-        (r) =>
-          r.name !== "ariwafo.me" &&
-          // The `portfolio` topic opts a repo in regardless of age, fork or archive status.
-          (r.topics?.includes(PORTFOLIO_TOPIC) || (!r.fork && !r.archived && r.created_at >= "2025-01-01"))
-      )
+      // Only repos opted in with the `portfolio` topic are shown; the site's own repo is skipped.
+      .filter((r) => r.name !== "ariwafo.me" && r.topics?.includes(PORTFOLIO_TOPIC))
       .sort((a, b) => b.pushed_at.localeCompare(a.pushed_at))
       .map((r) => {
         const topics = (r.topics ?? []).filter((t) => t !== PORTFOLIO_TOPIC);
