@@ -26,6 +26,7 @@
     --destructive-foreground: 50 27% 96%;
     --ring: 236 91% 57%;
     --warning: 38 92% 38%;
+    --notes: 330 81% 48%;
     --radius: 0px;
 
     --dot: 48 12% 90.5%;
@@ -53,6 +54,7 @@
     --destructive-foreground: 225 8% 9%;
     --ring: 236 100% 72%;
     --warning: 38 92% 60%;
+    --notes: 330 85% 72%;
 
     --dot: 225 6% 20%;
   }

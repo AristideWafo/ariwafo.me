@@ -52,6 +52,7 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         warning: "hsl(var(--warning))",
+        notes: "hsl(var(--notes))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
