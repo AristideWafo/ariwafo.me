@@ -17,7 +17,8 @@ export function buildMetadata(opts: BuildMetaOptions = {}): Metadata {
   const base = siteProfile.url.replace(/\/$/, '');
   const url = opts.path ? `${base}${opts.path}` : base;
   const description = opts.description ?? siteProfile.description;
-  const images = opts.ogImage ? [opts.ogImage] : [];
+  // Omit when unset so the root layout's image (if any) isn't overridden with nothing.
+  const images = opts.ogImage ? [opts.ogImage] : undefined;
 
   return {
     title,
@@ -31,6 +32,8 @@ export function buildMetadata(opts: BuildMetaOptions = {}): Metadata {
       type: opts.type ?? 'website',
       images,
     },
+    // Large preview card on X/LinkedIn/Slack.
+    twitter: { card: 'summary_large_image', images },
     robots: opts.noIndex ? { index: false, follow: false } : { index: true, follow: true },
   };
 }

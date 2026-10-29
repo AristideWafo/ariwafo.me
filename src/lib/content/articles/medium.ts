@@ -1,4 +1,5 @@
 import type { ExternalArticle } from "./data";
+import { readingMinutes } from "./reading-time.ts";
 
 export const MEDIUM_FEED = "https://medium.com/feed/@wafoaristide";
 
@@ -14,12 +15,14 @@ export function parseMediumFeed(xml: string): ExternalArticle[] {
     const url = text(tagContent(item, "link") ?? "").split("?")[0];
     const pubDate = new Date(text(tagContent(item, "pubDate") ?? ""));
     if (!title || !url) continue;
+    const html = text(tagContent(item, "content:encoded") ?? "");
     articles.push({
       id: url.split("/").pop() ?? url,
       title,
       url,
       date: isNaN(+pubDate) ? undefined : pubDate.toISOString().slice(0, 10),
       platform: "Medium",
+      readingTime: html ? readingMinutes(html.replace(/<[^>]*>/g, " ")) : undefined,
       tags: [...item.matchAll(/<category>([\s\S]*?)<\/category>/g)].map((m) => text(m[1])),
     });
   }

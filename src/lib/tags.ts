@@ -7,13 +7,22 @@ const LABELS: Record<string, string> = {
   api: "REST API", "rest-api": "REST API", oauth2: "OAuth2",
   k8s: "Kubernetes", kubernetes: "Kubernetes", terraform: "Terraform",
   hcl: "HCL", typescript: "TypeScript", javascript: "JavaScript",
-  nodejs: "Node.js", gmail: "Gmail",
+  nodejs: "Node.js", gmail: "Gmail", dns: "DNS", "gitlab-ci": "GitLab CI",
+  gitlab: "GitLab", "dora-metrics": "DORA Metrics", sre: "SRE",
+  // Synonyms folded into one filter.
+  "ci-cd-pipeline": "CI/CD", monitoring: "Observability",
 };
+
+// Too generic to filter by; dropped from every source.
+const IGNORED = new Set([
+  "coding", "competition", "experience", "software-development", "software-engineering",
+]);
 
 const titleCase = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
 
 export function tagLabel(raw: string): string {
   const key = raw.trim().toLowerCase().replace(/\s+/g, "-");
+  if (IGNORED.has(key)) return "";
   if (LABELS[key]) return LABELS[key];
   if (key.startsWith("aws-")) return `AWS ${tagLabel(key.slice(4))}`;
   return key.split("-").filter(Boolean).map(titleCase).join(" ");
