@@ -30,7 +30,7 @@ export function ArticleCard({ article }: { article: ArticleEntry }) {
 
       <p className="mt-3 flex-1 leading-relaxed text-muted-foreground">{article.description}</p>
 
-      <TagList tags={article.tags.slice(0, 4)} basePath="/articles" />
+      <TagList tags={article.tags.slice(0, 3)} basePath="/articles" />
 
       <p className={cn("mt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors", hoverText)}>
         {external ? `Read on ${article.platform} ↗` : "Read →"}

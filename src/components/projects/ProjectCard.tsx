@@ -38,7 +38,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         {project.description}
       </p>
 
-      <TagList tags={project.tags.slice(0, 5)} basePath="/projects" />
+      <TagList tags={project.tags.slice(0, 3)} basePath="/projects" />
 
       <p className="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors group-hover:text-primary">
         View source ↗
