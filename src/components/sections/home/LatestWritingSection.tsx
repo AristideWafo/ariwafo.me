@@ -1,12 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
-import { externalArticles } from "@/lib/content/articles/data";
+import { formatDate, getExternalArticles } from "@/lib/content/articles/data";
 
-// Newest articles sit at the end of the array.
-const latest = externalArticles.slice(-3).reverse();
-
-export function LatestWritingSection() {
+export async function LatestWritingSection() {
+  const latest = (await getExternalArticles()).slice(0, 3);
   if (latest.length === 0) return null;
 
   return (
@@ -20,8 +18,11 @@ export function LatestWritingSection() {
               rel="noopener noreferrer"
               className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 hover:text-primary"
             >
-              <span>{article.description}</span>
-              <span className="label">{article.platform} ↗</span>
+              <span>{article.title}</span>
+              <span className="label">
+                {article.date && `${formatDate(article.date)} — `}
+                {article.platform} ↗
+              </span>
             </a>
           </li>
         ))}

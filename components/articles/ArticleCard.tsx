@@ -1,18 +1,12 @@
 import Link from "next/link";
-import { Tag } from "@/components/ui/Tag";
-import { InternalArticle } from "@/lib/content/articles/data";
+import { normalizeTags } from "@/lib/tags";
+import { TagList } from "@/components/ui/TagList";
+import { InternalArticle, formatDate } from "@/lib/content/articles/data";
 
 interface ArticleCardProps {
   article: InternalArticle;
   featured?: boolean;
 }
-
-const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-  });
 
 export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   return (
@@ -37,13 +31,7 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
         {article.excerpt}
       </p>
 
-      <ul className="mt-5 flex flex-wrap gap-2">
-        {article.tags.slice(0, 4).map((tag) => (
-          <li key={tag}>
-            <Tag>{tag}</Tag>
-          </li>
-        ))}
-      </ul>
+      <TagList tags={normalizeTags(article.tags).slice(0, 4)} basePath="/articles" />
 
       <p className="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors group-hover:text-primary">
         Read →

@@ -1,3 +1,6 @@
+import { normalizeTags } from "@/lib/tags";
+import { MEDIUM_FEED, parseMediumFeed } from "./medium";
+
 export interface InternalArticle {
   id: string;
   title: string;
@@ -12,19 +15,21 @@ export interface InternalArticle {
 
 export interface ExternalArticle {
   id: string;
+  title: string;
   url: string;
+  /** ISO date; optional for hand-written entries. */
+  date?: string;
   description?: string;
-  platform: string; // "Medium", "Dev.to", "LinkedIn", etc.
-  tags?: string[];
+  platform: string; // "Medium", "LinkedIn", etc.
+  tags: string[];
 }
 
-export interface ExternalArticleMetadata {
-  title: string;
-  description: string;
-  image: string;
-  url: string;
-  platform: string;
-}
+export const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 
 export const internalArticles: InternalArticle[] = [
 //   {
@@ -81,50 +86,41 @@ export const internalArticles: InternalArticle[] = [
 //   }
 ];
 
-export const externalArticles: ExternalArticle[] = [
+/** Hand-written entries; Medium posts come from the RSS feed. */
+const manualArticles: ExternalArticle[] = [
   {
-    id: "securing-aws-infrastructure-with-bastion-hosts-and-terraform",
-    url: "https://medium.com/@wafoaristide/securing-aws-infrastructure-with-bastion-hosts-and-terraform-ec54473932dc",
-    platform: "Medium",
-    description: "Securing AWS Infrastructure with Bastion Hosts and Terraform",
-    tags: ["AWS", "Terraform", "Security", "Infrastructure"]
-  },  {
     id: "thales-battle-dev-2025-epitech",
+    title: "Thales Battle Dev 2025: our Paris campus answers present",
     url: "https://www.epitech.eu/2025/10/27/thales-battle-dev-2025-notre-campus-parisien-repond-present/",
+    date: "2025-10-27",
     platform: "Epitech",
     description: "Analyse et retour d'expérience sur la participation d'Epitech Paris au Thales Battle Dev 2025.",
-    tags: ["Competition", "Coding", "Experience"]
-  },  {
-    id: "ci-cd-for-monorepos-traps-and-best-practices",
-    url: "https://medium.com/@wafoaristide/ci-cd-for-monorepos-traps-and-best-practices-be91aae7accb",
-    platform: "Medium",
-    description: "CI/CD for Monorepos: Traps and Best Practices",
-    tags: ["CI/CD", "DevOps", "Monorepo", "Best Practices"]
-  },  {
-    id: "dora-metrics-scientific-approach",
-    url: "https://medium.com/@wafoaristide/dora-metrics-the-scientific-approach-to-measuring-devops-performance-d7b36572e98c",
-    platform: "Medium",
-    description: "DORA Metrics: The Scientific Approach to Measuring DevOps Performance",
-    tags: ["DevOps", "Metrics", "Performance", "Best Practices"]
-  },  {
-    id: "from-zero-to-production-ci-pipeline-java",
-    url: "https://medium.com/@wafoaristide/from-zero-to-production-building-a-robust-ci-pipeline-for-your-java-application-with-github-f5539cca17b4",
-    platform: "Medium",
-    description: "How to fully automate your Java development cycle, from build to release, in less than an hour",
-    tags: ["CI/CD", "Java", "GitHub Actions", "Automation"]
+    tags: ["Competition", "Coding", "Experience"],
   },
   {
     id: "winning-competition",
-    url: "https://www.linkedin.com/posts/aristidewafo_epitechparis-thalesbattledev-codingbattle-ugcPost-7386055530428997633-tCQd?utm_source=share&utm_medium=member_desktop&rcm=ACoAADS88X4BleK9KFpZBXp_qE4UDUTpSHwGhbM",
+    title: "Winning the Thales Battle Dev with Epitech Paris",
+    url: "https://www.linkedin.com/posts/aristidewafo_epitechparis-thalesbattledev-codingbattle-ugcPost-7386055530428997633-tCQd",
+    date: "2025-10-20", // decoded from the LinkedIn post id
     platform: "LinkedIn",
-    tags: ["Competition", "Coding", "Experience"]
+    tags: ["Competition", "Coding", "Experience"],
   },
-  // {
-  //   id: "linkedin-cloud-migration",
-  //   url: "https://linkedin.com/pulse/cloud-migration-strategy-aristide-wafo",
-  //   platform: "LinkedIn",
-  // },
 ];
+
+/** Medium + manual entries, newest first (undated last). Never throws. */
+export async function getExternalArticles(): Promise<ExternalArticle[]> {
+  let medium: ExternalArticle[] = [];
+  try {
+    const res = await fetch(MEDIUM_FEED, { next: { revalidate: 86400 } });
+    if (!res.ok) throw new Error(`Medium RSS ${res.status}`);
+    medium = parseMediumFeed(await res.text());
+  } catch (error) {
+    console.error("Articles: Medium RSS failed, using manual entries only.", error);
+  }
+  return [...medium, ...manualArticles]
+    .map((a) => ({ ...a, tags: normalizeTags(a.tags) }))
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+}
 
 export const featuredInternalArticles = internalArticles.filter(
   (article) => article.featured

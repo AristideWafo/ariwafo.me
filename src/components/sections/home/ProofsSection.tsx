@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "@/components/ui/Container";
 import { Kpi } from "@/components/ui/Kpi";
 import { work } from "@/lib/content/experience";
-import { projects } from "@/lib/content/projects/data";
+import { getProjects } from "@/lib/content/projects/github";
 
 /** Years since the first role, so the figure never goes stale in the copy. */
 function yearsSince(earliest: string) {
@@ -12,7 +12,8 @@ function yearsSince(earliest: string) {
   return Math.max(1, Math.floor(months / 12));
 }
 
-export function ProofsSection() {
+export async function ProofsSection() {
+  const projects = await getProjects();
   const earliest = work.map((w) => w.start).sort()[0];
 
   const kpis = [

@@ -1,25 +1,18 @@
-"use client";
-
-import { useState, useMemo } from "react";
 import { Section } from "@/components/ui/Section";
 import { CardGrid } from "@/components/ui/CardGrid";
-import { projects } from "@/lib/content/projects/data";
+import { TagFilter } from "@/components/ui/TagFilter";
+import { getProjects } from "@/lib/content/projects/github";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { cn } from "@/lib/utils";
+import { hasTag, tagLabel } from "@/lib/tags";
 
-export default function ProjectsPage() {
-  const [selectedTag, setSelectedTag] = useState<string>("All");
-
-  const allTags = useMemo(() => {
-    const tagsSet = new Set<string>();
-    projects.forEach((project) => project.tags?.forEach((tag) => tagsSet.add(tag)));
-    return ["All", ...Array.from(tagsSet).sort()];
-  }, []);
-
-  const filteredProjects = useMemo(() => {
-    if (selectedTag === "All") return projects;
-    return projects.filter((project) => project.tags?.includes(selectedTag));
-  }, [selectedTag]);
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tag?: string }>;
+}) {
+  const { tag } = await searchParams;
+  const projects = await getProjects();
+  const filtered = tag ? projects.filter((p) => hasTag(p, tag)) : projects;
 
   return (
     <>
@@ -31,43 +24,24 @@ export default function ProjectsPage() {
         divider={false}
         className="pb-0 md:pb-0"
       >
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter projects by tag"
-        >
-          {allTags.map((tag) => {
-            const active = selectedTag === tag;
-            return (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => setSelectedTag(tag)}
-                aria-pressed={active}
-                className={cn(
-                  "border px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
-                  active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                )}
-              >
-                {tag}
-              </button>
-            );
-          })}
-        </div>
+        <TagFilter
+          items={projects}
+          basePath="/projects"
+          active={tag}
+          label="Filter projects by tag"
+        />
       </Section>
 
       <Section divider={false}>
-        {filteredProjects.length > 0 ? (
+        {filtered.length > 0 ? (
           <CardGrid>
-            {filteredProjects.map((project, index) => (
+            {filtered.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
             ))}
           </CardGrid>
         ) : (
           <p className="border border-border p-10 text-center font-mono text-sm text-muted-foreground">
-            No projects tagged “{selectedTag}”.
+            No projects tagged “{tag ? tagLabel(tag) : ""}”.
           </p>
         )}
       </Section>

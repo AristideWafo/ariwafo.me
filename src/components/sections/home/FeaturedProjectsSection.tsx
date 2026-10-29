@@ -3,9 +3,11 @@ import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { CardGrid } from "@/components/ui/CardGrid";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { featuredProjects, projects } from "@/lib/content/projects/data";
+import { getProjects } from "@/lib/content/projects/github";
 
-export function FeaturedProjectsSection() {
+export async function FeaturedProjectsSection() {
+  const projects = await getProjects();
+  const featuredProjects = projects.filter((p) => p.featured);
   if (featuredProjects.length === 0) return null;
 
   return (
