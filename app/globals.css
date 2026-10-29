@@ -5,14 +5,14 @@
 @layer base {
   :root {
     /* Paper-and-ink palette: warm cream ground, near-black ink, electric blue accent. */
-    --background: 50 30% 99.4%;
+    --background: 50 30% 99.8%;
     --foreground: 225 8% 9%;
     --surface: 49 23% 91%;
     --muted: 49 23% 91%;
     --muted-foreground: 52 4% 44%;
-    --popover: 50 30% 99.4%;
+    --popover: 50 30% 99.8%;
     --popover-foreground: 225 8% 9%;
-    --card: 50 30% 99.4%;
+    --card: 50 30% 99.8%;
     --card-foreground: 225 8% 9%;
     --border: 48 16% 82%;
     --input: 48 16% 82%;
@@ -27,7 +27,7 @@
     --ring: 236 91% 57%;
     --radius: 0px;
 
-    --dot: 48 12% 93%;
+    --dot: 48 12% 88%;
   }
 
   .dark {
