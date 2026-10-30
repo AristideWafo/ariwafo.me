@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FluidDots } from "@/components/layout/FluidDots";
 import { cn } from "../src/lib/utils";
 import { siteProfile } from "@/lib/content/site";
 
@@ -80,6 +81,8 @@ export default function RootLayout({
             gtag('config', 'G-4SD9W3LE8L');
           `}
         </Script>
+
+        <FluidDots />
 
         <Header />
         <main id="main" role="main" className="animate-enter relative">
