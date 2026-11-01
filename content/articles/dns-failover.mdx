@@ -17,20 +17,7 @@ repo: dns-failover
 
 For each configured record, the daemon checks the primary health URL on an interval. After a number of consecutive failures it looks at the secondary: if that one is healthy it moves the DNS record to the secondary IP, otherwise it raises an alert because there is nowhere to go.
 
-```text
-For each configured record:
-  Check primary every 30s
-  ├── OK → state NORMAL, counter reset
-  └── KO × 3 consecutive
-        ├── secondary OK → switch DNS to the secondary IP + Discord
-        └── secondary KO → Discord alert "nowhere to go"
-
-  In FAILOVER mode, keep checking the primary
-    └── OK for 5 stable minutes → restore DNS to the primary IP + Discord
-
-  Check the secondary in parallel
-    └── KO × 5 consecutive → Discord alert "degraded fallback"
-```
+<DnsFailoverFlow />
 
 ## Configuration
 
