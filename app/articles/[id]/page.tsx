@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Toc } from "@/components/articles/Toc";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
@@ -58,24 +59,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <hr className="my-10 border-border" />
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
-          <div className="prose prose-neutral max-w-3xl dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-primary prose-code:font-mono prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-pre:text-sm prose-pre:rounded-none">
+          <div className="prose prose-neutral max-w-3xl dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-primary prose-code:font-mono prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-pre:text-sm prose-pre:rounded-none prose-table:text-sm prose-th:text-left prose-th:font-mono prose-th:text-xs prose-th:uppercase prose-th:tracking-wide prose-table:border prose-table:border-border prose-th:border prose-th:border-border prose-td:border prose-td:border-border prose-th:px-4 prose-th:py-3 prose-td:px-4 prose-td:py-3 prose-td:align-top prose-td:leading-normal [&_td]:min-w-[8rem][&_table]:block [&_table]:overflow-x-auto">
             {content}
           </div>
 
           <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
             {headings.length > 0 && (
-              <nav aria-label="Table of contents" className="hidden lg:block">
-                <p className="label-accent">Contents</p>
-                <ol className="mt-3 space-y-2 border-l border-border text-sm">
-                  {headings.map((h) => (
-                    <li key={h.id} className={h.depth === 3 ? "pl-7" : "pl-3"}>
-                      <a href={`#${h.id}`} className="text-muted-foreground hover:text-primary">
-                        {h.text}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </nav>
+              <Toc headings={headings} />
             )}
             {meta.repo && <RepoCard repo={meta.repo} />}
           </aside>

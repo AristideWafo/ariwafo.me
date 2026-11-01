@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 // Same 14px lattice as the CSS dot ground in globals.css, which stays as the no-JS fallback.
 const SPACING = 14;
-const RADIUS = 200; // cursor reach, px
+const RADIUS = 340; // cursor reach, px
 const SPRING = 0.035;
 const DAMPING = 0.88;
 
@@ -91,8 +91,8 @@ export function FluidDots() {
       for (let i = 0; i < n; i++) {
         const p = pull[i];
         if (p < 0.01) continue;
-        const s = 2 + p * 1.6;
-        ctx!.globalAlpha = Math.min(1, p * 1.8);
+        const s = 2 + p * 1.1;
+        ctx!.globalAlpha = Math.min(0.28, p * 0.5);
         ctx!.fillRect(hx[i] + ox[i] - s / 2, hy[i] + oy[i] - s / 2, s, s);
       }
       ctx!.globalAlpha = 1;
