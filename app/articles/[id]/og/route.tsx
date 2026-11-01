@@ -61,7 +61,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: MUTED }}>
-          <span>{siteProfile.name} · Cloud & DevOps Engineer</span>
+          <span>{siteProfile.name} · Cloud, Observability &amp; Agentic AI</span>
           <span>{siteProfile.url.replace(/^https?:\/\//, "")}</span>
         </div>
       </div>

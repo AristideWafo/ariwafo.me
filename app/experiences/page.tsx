@@ -11,8 +11,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildMetadata({
   title: "Experience",
   description:
-    "Observability at Société Générale, freelance DevOps for Genuka and Moabi Voyages, plus backend work at Astree Software and SCI2M.",
+    "Observability and AI-powered SRE agent at Société Générale, cloud architecture for Genuka and Moabi Voyages, plus backend engineering at Astree Software and SCI2M.",
   path: "/experiences",
+  fig: "FIG_020 · History",
 });
 
 const formatTalkDate = (date: string) => {

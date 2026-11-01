@@ -10,8 +10,9 @@ import { EmailIcon } from "../../public/icons/EmailIcon";
 export const metadata: Metadata = buildMetadata({
   title: "Contact",
   description:
-    "Get in touch about cloud infrastructure, DevOps automation, observability work or technical collaboration.",
+    "Get in touch about production agentic AI, observability, cloud infrastructure or Forward Deployed Engineering roles.",
   path: "/contact",
+  fig: "FIG_050 · Contact",
 });
 
 const linkedin =
