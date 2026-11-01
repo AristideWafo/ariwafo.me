@@ -91,8 +91,8 @@ export function FluidDots() {
       for (let i = 0; i < n; i++) {
         const p = pull[i];
         if (p < 0.01) continue;
-        const s = 2 + p * 1.4;
-        ctx!.globalAlpha = Math.min(0.5, p * 0.9);
+        const s = 2 + p * 1.1;
+        ctx!.globalAlpha = Math.min(0.28, p * 0.5);
         ctx!.fillRect(hx[i] + ox[i] - s / 2, hy[i] + oy[i] - s / 2, s, s);
       }
       ctx!.globalAlpha = 1;
