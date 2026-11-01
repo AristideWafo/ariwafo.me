@@ -4,10 +4,8 @@ date: "2026-10-29"
 excerpt: "A Go daemon that watches primary and secondary HTTP endpoints and flips a Cloudflare DNS record when the primary fails, then restores it once the primary is stable."
 tags: ["Go", "DNS", "Cloudflare", "DevOps"]
 repo: dns-failover
-draft: true
 ---
 
-{/* DRAFT generated from the README — review before publishing */}
 
 <TLDR
   problem="When a primary server stops answering, the DNS record has to be pointed at a secondary one, and back again later."
