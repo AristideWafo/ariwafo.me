@@ -9,8 +9,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildMetadata({
   title: "About",
   description:
-    "Backend engineer turned cloud and DevOps engineer. Observability at Société Générale, AWS and Terraform certified, based in Paris.",
+    "Backend engineer turned cloud, observability and production AI systems engineer. Building SLI/SLO frameworks and an AI-assisted SRE agent at Société Générale.",
   path: "/about",
+  fig: "FIG_040 · Profile",
 });
 
 export default function AboutPage() {

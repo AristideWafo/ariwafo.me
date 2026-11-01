@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { CardGrid } from "@/components/ui/CardGrid";
 import { TagFilter } from "@/components/ui/TagFilter";
 import { getProjects } from "@/lib/content/projects/github";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { hasTag, tagLabel } from "@/lib/tags";
+import { buildMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Projects",
+  description:
+    "Infrastructure, observability and automation built in the open: Terraform modules, CI/CD pipelines and production tooling.",
+  path: "/projects",
+  fig: "FIG_010 · Catalogue",
+});
 
 export default async function ProjectsPage({
   searchParams,

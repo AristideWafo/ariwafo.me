@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { CardGrid } from "@/components/ui/CardGrid";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { getArticles } from "@/lib/content/articles/data";
 import { TagFilter } from "@/components/ui/TagFilter";
 import { hasTag, tagLabel } from "@/lib/tags";
+import { buildMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Articles",
+  description:
+    "Write-ups on production systems, CI/CD, DORA metrics, AWS security and the things that went wrong before they went right.",
+  path: "/articles",
+  fig: "FIG_030 · Writing",
+});
 
 export default async function ArticlesPage({
   searchParams,

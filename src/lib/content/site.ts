@@ -4,7 +4,7 @@ export const siteProfile = {
   location: "Paris, France",
   role: "Cloud & DevOps Engineer",
   email: "wafoaristide@gmail.com",
-  url: "https://ariwafo.me",
+  url: "https://aristidewafo.cloud",
   githubUser: "AristideWafo",
   resumePath: "/Aristide-WAFO-Cloud-DevOps-Engineer.pdf",
   description:

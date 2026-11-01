@@ -6,6 +6,7 @@ interface BuildMetaOptions {
   description?: string;
   path?: string; // path starting with /
   ogImage?: string;
+  fig?: string;
   type?: 'website' | 'article';
   noIndex?: boolean;
 }
@@ -17,8 +18,25 @@ export function buildMetadata(opts: BuildMetaOptions = {}): Metadata {
   const base = siteProfile.url.replace(/\/$/, '');
   const url = opts.path ? `${base}${opts.path}` : base;
   const description = opts.description ?? siteProfile.description;
-  // Omit when unset so the root layout's image (if any) isn't overridden with nothing.
-  const images = opts.ogImage ? [opts.ogImage] : undefined;
+
+  const isHome = !opts.path || opts.path === '/';
+  const defaultOgImage = isHome
+    ? '/og'
+    : `/og?${new URLSearchParams({
+        ...(title ? { title } : {}),
+        ...(description ? { description } : {}),
+        ...(opts.fig ? { fig: opts.fig } : {}),
+      }).toString()}`;
+
+  const ogUrl = opts.ogImage ?? defaultOgImage;
+  const images = [
+    {
+      url: ogUrl,
+      width: 1200,
+      height: 630,
+      alt: title ? `${title} · ${siteProfile.name}` : `${siteProfile.name} — Portfolio`,
+    },
+  ];
 
   return {
     title,
@@ -33,7 +51,7 @@ export function buildMetadata(opts: BuildMetaOptions = {}): Metadata {
       images,
     },
     // Large preview card on X/LinkedIn/Slack.
-    twitter: { card: 'summary_large_image', images },
+    twitter: { card: 'summary_large_image', images: [ogUrl] },
     robots: opts.noIndex ? { index: false, follow: false } : { index: true, follow: true },
   };
 }
