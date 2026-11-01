@@ -167,3 +167,32 @@ export function PrivateNetwork() {
     </Figure>
   );
 }
+
+export function DnsFailoverFlow() {
+  return (
+    <Figure title="How the daemon decides: check, fail over, restore" w={900} h={560}>
+      <text x={450} y={20} textAnchor="middle" fontSize="11" fill={C.sub}>For each configured record</text>
+      <Box x={330} y={30} w={240} h={56} title="Check primary" sub={["every 30s"]} />
+      <Line d="M400 86V108H180V128" label="OK" lx={290} ly={102} anchor="middle" />
+      <Line d="M500 86V108H700V128" label="KO × 3 consecutive" lx={600} ly={102} anchor="middle" />
+      <Box x={60} y={130} w={240} h={60} title="State NORMAL" sub={["counter reset"]} soft />
+      <Line d="M60 160H30V58H328" dashed />
+      <Box x={580} y={130} w={240} h={60} title="Check secondary" sub={["after 3 consecutive KO"]} />
+
+      <Line d="M670 190V220H560V248" label="secondary OK" lx={615} ly={214} anchor="middle" />
+      <Line d="M730 190V220H825V248" label="secondary KO" lx={778} ly={214} anchor="middle" />
+      <Box x={450} y={250} w={220} h={60} title="Switch DNS to secondary" sub={["+ Discord"]} hl />
+      <Box x={760} y={250} w={130} h={60} title="Discord alert" sub={["nowhere to go"]} />
+
+      <Line d="M560 310V368" />
+      <Box x={450} y={370} w={220} h={60} title="FAILOVER mode" sub={["keep checking the primary"]} soft />
+      <Line d="M560 430V478" label="OK for 5 stable minutes" lx={548} ly={458} anchor="end" />
+      <Box x={450} y={480} w={220} h={60} title="Restore DNS to primary" sub={["+ Discord"]} hl />
+      <Line d="M450 510H180V192" dashed label="back to NORMAL" lx={192} ly={340} />
+
+      <Box x={690} y={370} w={200} h={60} title="Check secondary" sub={["in parallel"]} soft />
+      <Line d="M790 430V478" label="KO × 5 consecutive" lx={782} ly={458} anchor="end" />
+      <Box x={690} y={480} w={200} h={60} title="Discord alert" sub={["degraded fallback"]} />
+    </Figure>
+  );
+}
