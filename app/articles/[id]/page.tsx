@@ -58,8 +58,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         <hr className="my-10 border-border" />
 
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
-          <div className="prose prose-neutral max-w-3xl dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-primary prose-code:font-mono prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-pre:text-sm prose-pre:rounded-none prose-table:text-sm prose-th:text-left prose-th:font-mono prose-th:text-xs prose-th:uppercase prose-th:tracking-wide prose-table:border prose-table:border-border prose-th:border prose-th:border-border prose-td:border prose-td:border-border prose-th:px-4 prose-th:py-3 prose-td:px-4 prose-td:py-3 prose-td:align-top prose-td:leading-normal [&_td]:min-w-[8rem][&_table]:block [&_table]:overflow-x-auto">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
+          <div className="prose prose-neutral min-w-0 max-w-3xl break-words dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-primary prose-code:font-mono prose-code:before:content-none prose-code:after:content-none prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-pre:text-sm prose-pre:rounded-none prose-table:text-sm prose-th:text-left prose-th:font-mono prose-th:text-xs prose-th:uppercase prose-th:tracking-wide prose-table:border prose-table:border-border prose-th:border prose-th:border-border prose-td:border prose-td:border-border prose-th:px-4 prose-th:py-3 prose-td:px-4 prose-td:py-3 prose-td:align-top prose-td:leading-normal [&_td]:min-w-[8rem][&_table]:block [&_table]:overflow-x-auto">
             {content}
           </div>
 
