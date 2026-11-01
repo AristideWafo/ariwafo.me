@@ -1,0 +1,293 @@
+---
+title: "AWS Session Manager: Why Your EC2 Instances No Longer Need an Open SSH Port"
+date: "2026-11-01"
+excerpt: "Session Manager does not replace SSH with a better terminal. It moves the trust boundary of administrative access from the network to identity."
+tags: ["AWS", "Session Manager", "IAM", "Security"]
+---
+
+<TLDR
+  problem="Classic bastion hosts and SSH keys make network reachability plus a secret the credential, with no link to a person, a ticket or a time window."
+  solution="Session Manager has the instance call out to AWS, and IAM decides who may speak to it. Both ends dial out and AWS joins them, so no inbound port is needed."
+  result="Access is controlled by policy, tags and session documents, but you now own the OS identity, the audit gaps, the private network path and a break-glass route."
+/>
+
+## 1. The problem: SSH is an access model, not just a protocol
+
+An administrator can open a shell on an EC2 instance that has no public IP, no inbound rule and no SSH key. The useful question is not how this works, but who controls it.
+
+Picture the setup. The instance sits in a private subnet. Its security group has zero inbound rules. No key pair was attached at launch. Yet from a laptop on the other side of the planet, an engineer gets an interactive root-capable shell. This article answers both questions and argues one thesis: Session Manager does not replace SSH with a better terminal. It moves the trust boundary of administrative access from the network to identity.
+
+### What the classic model really costs
+
+The standard answer to "how do I reach a private instance?" is a bastion host and a set of SSH keys. It works, and it accumulates hidden debt.
+
+| Concern | Classic bastion + SSH keys | Why it hurts at scale |
+| --- | --- | --- |
+| Entry point | Port 22 reachable from somewhere, often "temporarily" opened to a wide CIDR | The exposed surface is the first thing scanners and misconfigurations find |
+| Credentials | Long-lived key pairs, copied into `authorized_keys` files | Nobody can answer "which keys are valid on which hosts" without logging in to check |
+| Attribution | Often one shared account such as `ec2-user` | Logs show a host and a key, not a person |
+| Offboarding | Remove a person's key from every host that ever received it | Revocation is a fleet-wide operation, so it gets skipped |
+| The bastion itself | A server to patch, monitor, scale and defend | The thing built to protect the fleet becomes its most attractive target |
+
+### One design decision behind every row
+
+Each row is a symptom of the same choice. The instance listens, and anyone who can reach the port and holds a valid key is let in. Authority is expressed as network reachability plus possession of a secret. Neither is tied to a person, a ticket or a time window.
+
+Session Manager inverts the direction. The instance calls out to AWS, and AWS decides who may speak to it, based on IAM. Reachability stops being the credential.
+
+<AccessModels />
+
+On one side, network reach and a file on disk decide who gets in. On the other, a policy in IAM decides, and the instance never accepts a connection.
+
+### How the rest of the article is organised
+
+The argument runs in one line: mechanism (section 2), security model (3), implementation in a fully private network (4), limits (5), and what administering by identity means (6). Fleet migration, complete Terraform, compliance mapping, RDP and hybrid nodes are deliberately left for separate pieces. They deserve their own space and would blur this one.
+
+## 2. How Session Manager actually works
+
+Session Manager works because both ends dial out: the instance holds an outbound connection to AWS, the client opens its own, and AWS joins the two. Nothing ever connects to the instance.
+
+### Four actors, two identities
+
+| Actor | What it does | Credentials it acts with |
+| --- | --- | --- |
+| The client | AWS CLI with the Session Manager plugin, or the browser console | The human's IAM principal |
+| Session Manager service | Authorizes the request, brokers the session, relays the stream | AWS-internal |
+| SSM Agent on the instance | Keeps an outbound connection to AWS and starts the shell | The instance's IAM role |
+| The shell | Runs commands on the OS | A local OS user, `ssm-user` by default |
+
+The most common source of confusion is that two unrelated IAM identities are involved. The instance role lets the agent talk to AWS. The user's policy lets a human start a session. Granting one never grants the other, and each can be revoked independently.
+
+### What makes an instance "managed"
+
+An instance appears in Session Manager only when three conditions hold at the same time:
+
+1. **The agent is running.** SSM Agent is preinstalled on many AWS-provided AMIs, but a custom AMI needs it verified.
+2. **The agent has permissions.** Either an instance profile with `AmazonSSMManagedInstanceCore`, or Default Host Management Configuration, which applies a default role account-wide without a per-instance profile.
+3. **The agent has a network path out.** HTTPS on port 443 to `ssm` and `ssmmessages`, through a NAT, an internet gateway or VPC endpoints.
+
+One detail catches teams out. `ec2messages` is no longer a universal requirement: AWS documents that it is supported only in Regions launched before 2024, and agents from version 3.3.40.0 prefer `ssmmessages` whenever it is reachable. Read the endpoint list as "two, plus a legacy third in older Regions", not "always three".
+
+### The sequence of a session
+
+The flow below is simplified. AWS documents the API contract but not every internal hop.
+
+1. The client calls `ssm:StartSession` with the human's IAM credentials. The service evaluates the IAM policy and checks that the target is a managed node.
+2. The service returns three values: a `SessionId`, a `StreamUrl` pointing at the `ssmmessages` data-channel endpoint, and an encrypted `TokenValue` that is valid only long enough to establish the connection.
+3. The Session Manager plugin opens a WebSocket to that `StreamUrl`, authenticating with the token.
+4. On the other side, the agent already holds a control channel to the service. The service signals it, and the agent opens its own outbound data channel for the same session. This is why the instance role needs the four `ssmmessages` channel permissions.
+5. The service relays keystrokes and output between the two outbound connections. The agent starts a shell as `ssm-user`, or as the Run As user if one is configured.
+
+<SessionSequence />
+
+Steps 4 and 6 in the diagram are the two outbound data connections. The client never reaches the instance's network, and the instance never accepts a connection.
+
+The design in one phrase: AWS acts as a rendezvous point between two parties who never see each other's network.
+
+### Trying it
+
+```bash
+# Is the instance visible to Systems Manager?
+aws ssm describe-instance-information \
+  --filters "Key=InstanceIds,Values=i-0123456789abcdef0"
+
+# Open an interactive shell, with no key, no bastion, no inbound port
+aws ssm start-session --target i-0123456789abcdef0
+```
+
+If the first command returns nothing, the instance is not managed, and no amount of IAM work on the human side will help. That distinction is the first debugging step in every Session Manager incident.
+
+## 3. What actually changes: IAM becomes the control point
+
+With Session Manager, "who may get a shell on this host?" is answered by IAM policy evaluation, not by a key file on the host. That is a real gain, but only if three things are controlled deliberately: the policy, the OS identity and the audit trail.
+
+<ControlEvidence />
+
+The first layer says who may start a session, the second shapes what a session is, and the third is the host, which the other two cannot see into.
+
+### Control by tag, not by instance list
+
+A `StartSession` permission is scoped with the instance ARN and, more usefully, with a tag condition. The policy below lets its holder open sessions only on instances tagged `Env=dev`, and only with the default shell document.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": "arn:aws:ec2:eu-west-3:111122223333:instance/*",
+      "Condition": { "StringLike": { "ssm:resourceTag/Env": ["dev"] } }
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": "arn:aws:ssm:eu-west-3:111122223333:document/SSM-SessionManagerRunShell"
+    }
+  ]
+}
+```
+
+The condition can also compare an instance tag with a principal tag (`ssm:resourceTag/department` against `${aws:PrincipalTag/department}`). With federated identities carrying those tags, one policy serves every team and nobody edits it when a team is added.
+
+### Close the side doors
+
+Starting a session is not the only way the agent will run commands for a human. Three controls matter more than they first appear:
+
+- **Session documents are an IAM resource.** Allowing only `SSM-SessionManagerRunShell` blocks port forwarding. Allowing only a port-forwarding document does the opposite. A custom `InteractiveCommands` document with an `allowedPattern` restricts a session to approved commands.
+- **`ssm:SendCommand` is a second entry point.** Run Command executes scripts through the same agent, typically as root. A policy that locks down `StartSession` and leaves `SendCommand` open has secured the front door and left the side one ajar. This is architectural reasoning rather than a documented warning, so check it against your own policies.
+- **Revoking the instance role is not instant.** AWS notes that after `ssmmessages:OpenControlChannel` is removed, the agent can stay connected for up to an hour. To cut a live session immediately, use `ssm:TerminateSession`.
+
+### The identity on the host
+
+This is the most frequent blind spot in audits. By default every session runs as `ssm-user`, and the agent adds that account to `/etc/sudoers` on Linux and macOS, or to Administrators on Windows. Anyone allowed to start a default session is, in practice, root.
+
+| Configuration | OS identity of the session | What it means |
+| --- | --- | --- |
+| Default | `ssm-user` with sudo | Every authorized human gets administrative rights on the host |
+| `ssm-user` sudo removed | `ssm-user` without sudo | Least privilege by default, elevation becomes explicit |
+| Run As, default OS user in preferences | One shared unprivileged account | Safer, but individuals are still indistinguishable on the host |
+| Run As, `SSMSessionRunAs` tag on the IAM principal | One OS account per person | Nominal identity on the host as well as in AWS |
+
+Two details from the documentation deserve attention. Run As cannot use root, and once it is enabled there is no fallback to `ssm-user`: if the OS account does not exist, the session fails. AWS also warns that for Run As sessions, the node's own login and resource policies may not be applied the way they are for a normal login, so test them.
+
+### What is recorded, and what is not
+
+CloudTrail records the session API calls: who called `StartSession`, when, from which source IP and against which instance. It does not record what was typed.
+
+Session logs are the second layer. Sent to S3 they arrive when the session ends. Sent to CloudWatch Logs they can stream while the session runs, which is what you want for alerting. A KMS key can add a layer of encryption between the client and the node on top of TLS.
+
+The limits are important enough to tabulate.
+
+| Session type | CloudTrail records `StartSession` | Session Manager records commands and output |
+| --- | --- | --- |
+| Interactive shell | Yes | Yes, if logging is enabled in preferences |
+| Port forwarding | Yes | No |
+| SSH over Session Manager | Yes | No |
+
+AWS states that logging is unavailable for port-forwarding and SSH sessions, because Session Manager only tunnels an already encrypted stream. So "SSM gives better traceability" holds for interactive shells, and for tunnelled sessions it gives you who and when, not what.
+
+Three more caveats. The log is a terminal transcript, not a structured list of commands. On Linux the `screen` utility must be present or the log can be truncated. Secrets typed into a session can end up in it, and AWS documents commands to suppress echo when entering them. For command-level evidence, pair Session Manager with host-level auditing such as `auditd`.
+
+Finally, preferences are stored per account and per Region, in the `SSM-SessionManagerRunShell` document. A multi-Region estate needs the same configuration applied everywhere, ideally from infrastructure as code. The idle timeout defaults to 20 minutes and can be set between 1 and 60.
+
+## 4. The concrete case: a private instance with no NAT gateway
+
+In a subnet with no route to the internet, Session Manager works only if you build the network path yourself, and an instance with a perfect IAM role can still stay invisible. The cause is almost always the network, so that is where debugging should start.
+
+<PrivateNetwork />
+
+The session channel runs from the agent, through the endpoints, into Systems Manager. The engineer reaches the same service through its public API, and the two meet there.
+
+### What you have to build
+
+The agent must reach AWS over HTTPS (port 443). Without a NAT gateway or internet gateway, each destination needs a VPC interface endpoint, powered by AWS PrivateLink.
+
+| Endpoint | Service name | Why it is needed |
+| --- | --- | --- |
+| `ssm` | `com.amazonaws.<region>.ssm` | Agent registration and Systems Manager API calls |
+| `ssmmessages` | `com.amazonaws.<region>.ssmmessages` | The Session Manager channels themselves |
+| `ec2messages` | `com.amazonaws.<region>.ec2messages` | Legacy path: not supported in Regions launched since 2024, treated as optional in older ones by current AWS troubleshooting pages |
+| `s3` | `com.amazonaws.<region>.s3` | Only if session logs go to S3. A gateway endpoint is the usual choice |
+| `logs` | `com.amazonaws.<region>.logs` | Only if session logs stream to CloudWatch Logs |
+| `kms` | `com.amazonaws.<region>.kms` | Only if you add KMS encryption to the session channel |
+
+Some AWS how-to pages still list `ec2messages` as mandatory. In practice: create it when your Region supports it and you run older agents, and skip it in newer Regions where it does not exist.
+
+### The security groups that make "no inbound rules" work
+
+The instance security group has no inbound rule at all, and sessions still work. The connection starts outbound from the agent, and security groups are stateful, so replies are allowed back.
+
+- **Instance security group:** no ingress. Egress on TCP 443 towards the endpoints.
+- **Endpoint security group:** ingress on TCP 443 with the instance security group as the source.
+
+Referencing the instance group, rather than a CIDR, is what keeps the endpoints reachable only by the machines that should use them.
+
+### Why a correct instance stays invisible: a diagnostic order
+
+Work from the bottom of the stack up, because that is where the faults concentrate.
+
+1. **DNS.** The endpoint needs private DNS names enabled, which is the default but can be switched off. The VPC itself must have DNS support enabled. If `ssm.<region>.amazonaws.com` resolves to a public address, the agent will time out.
+2. **Subnet and Availability Zone.** An endpoint must have a network interface in the Availability Zone of the instance. An endpoint attached to a different subnet is a classic miss.
+3. **Security groups.** Check both sides, as above.
+4. **Role and permissions.** The instance profile needs `AmazonSSMManagedInstanceCore`, or Default Host Management Configuration must be active, in which case instances must use IMDSv2. After changing a role, restart the agent or wait a few minutes.
+5. **Organization guardrails.** A service control policy that explicitly denies the Systems Manager permissions silently defeats everything above.
+6. **The agent itself.** Its logs show the failing endpoint and the error, typically a timeout on `ssm.<region>.amazonaws.com`.
+
+<Callout type="info" title="Pattern to remember">
+A fault in the human's IAM policy produces an explicit access error, while a fault on the instance side, in the network or the role, produces silence. When nothing appears in `describe-instance-information`, suspect the network path first, then the instance role.
+</Callout>
+
+### Two design notes
+
+**Cost.** Interface endpoints are billed per endpoint, per Availability Zone, plus data processed. For a small estate a NAT gateway can be cheaper, for a larger one a shared set of endpoints usually wins. Check current pricing for your Region rather than assuming either.
+
+**Perimeter.** Endpoints can carry their own policy. That lets you restrict which principals and accounts may use them, a useful extra layer once private networking is in place.
+
+## 5. What Session Manager does not solve
+
+Session Manager removes the network entry point, but it adds a dependency on an agent and a regional service, and it leaves several risks exactly where they were. An honest architecture review lists both columns.
+
+### The dependencies you now carry
+
+- **The agent is a single point of access.** If it crashes, is starved of CPU or memory, or is broken by an OS change, the shell disappears at the moment you need it most. A break-glass path must exist, be documented and be tested before the incident. Typical candidates are the EC2 Serial Console, an EC2 Instance Connect Endpoint, or detaching the volume and mounting it on a rescue instance.
+- **The service is regional.** The agent calls the Systems Manager endpoints of its own Region. If those are degraded, access degrades with them, which is a reason for the break-glass path to avoid the same service.
+- **Custom images need discipline.** A golden AMI without a current agent, or with an outdated one, produces an instance that never becomes managed.
+- **The API has rate limits.** The documented default for `StartSession` is 3 transactions per second per account and Region. That is invisible for humans and relevant for automation that opens many sessions. Quotas change, so check the Systems Manager quotas page before designing around them.
+
+### The risks that stay
+
+- **Privilege.** With default settings a session is root. IAM replaces the key as the thing worth stealing: a stolen set of credentials is now a shell. Short-lived federated credentials, multi-factor conditions and Run As accounts are how you contain that.
+- **The instance role.** Anyone with a shell can reach the credentials of the instance's own role. Keep that role minimal, because it is now reachable by every human with a session.
+- **Evidence quality.** Transcripts are not structured, and tunnelled sessions are not recorded at all, as section 3 showed.
+- **Data movement.** A Session Manager shell is not designed for file transfer. The usual routes are S3 or SSH tunnelled over Session Manager, and the second one inherits the logging gap.
+
+### Where it sits among the alternatives
+
+EC2 Instance Connect Endpoint deserves an honest comparison, because it solves a neighbouring problem differently: it reaches private instances over SSH, without a public IP or an internet gateway, with access controlled by IAM.
+
+| Criterion | SSH via bastion | EC2 Instance Connect Endpoint | Session Manager |
+| --- | --- | --- | --- |
+| Inbound port on the instance | SSH from the bastion | SSH from the endpoint's security group | None |
+| Agent on the instance | No | No | Yes |
+| Who decides access | Possession of a key | IAM, on creating and using the endpoint | IAM, with tags and session documents |
+| What is recorded | Whatever you build | CloudTrail records every connection attempt, successful or not | CloudTrail, plus optional transcripts for interactive shells |
+| Beyond the shell | Nothing | Nothing | Run Command, Patch Manager, Inventory and Fleet Manager on the same agent |
+| Extra infrastructure | The bastion itself | An endpoint, with no extra charge apart from cross-zone data transfer | Interface endpoints if there is no NAT |
+
+The practical reading is simple. If you want SSH semantics without an agent, Instance Connect Endpoint is a serious option. If you want a unified management plane, per-tag authorization and shell transcripts, Session Manager is stronger. Many mature estates run Session Manager as the default and keep a second path for emergencies.
+
+## 6. Conclusion: what it means to administer by identity
+
+Session Manager replaces "who holds the key" with "who is allowed by IAM, under which conditions, and with what trace left behind." The network stops being the credential, and the controls move to places that can be reasoned about, versioned and audited.
+
+That shift is only as good as the decisions around it:
+
+- Treat the instance role and the user policy as two separate trust relationships, and review them separately.
+- Decide the OS identity on purpose. Leaving `ssm-user` with sudo is a choice, not a default to ignore.
+- Be exact about evidence. Interactive shells can be transcribed. Tunnelled sessions cannot, so pair Session Manager with host-level auditing where command-level proof matters.
+- Build the network path deliberately in private subnets, and debug it from DNS upward.
+- Keep a tested way in that does not depend on the agent.
+
+Session Manager is not just another way to open a terminal. It is a different way to design and govern administrative access to a machine, and the design question it raises is the useful one: not "how do we hide port 22", but "who should be able to act on this host, and how will we know what they did".
+
+## Sources
+
+- [Troubleshooting SSM Agent: endpoint requirements](https://docs.aws.amazon.com/systems-manager/latest/userguide/troubleshooting-ssm-agent.html)
+- [Reference: ec2messages, ssmmessages, and other API operations](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-messageAPIs.html)
+- [Improve the security of EC2 instances by using VPC endpoints for Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)
+- [Set up a VPC endpoint for Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-privatelink.html)
+- [Automated configuration of Session Manager without an internet gateway (AWS Cloud Operations Blog)](https://aws.amazon.com/blogs/mt/automated-configuration-of-session-manager-without-an-internet-gateway/)
+- [StartSession API reference](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_StartSession.html)
+- [Enabling and disabling session logging](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-logging.html)
+- [Logging session activity with CloudTrail](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-auditing.html)
+- [Turn on Run As support for Linux and macOS managed nodes](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-preferences-run-as.html)
+- [Turn on or turn off ssm-user account administrative permissions](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-ssm-user-permissions.html)
+- [Additional sample IAM policies for Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/getting-started-restrict-access-examples.html)
+- [Restrict access to commands in a session](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-restrict-command-access.html)
+- [Specify an idle session timeout value](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-preferences-timeout.html)
+- [Default Host Management Configuration](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html)
+- [Connect using EC2 Instance Connect Endpoint](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-with-ec2-instance-connect-endpoint.html)
+- [Systems Manager endpoints and quotas](https://docs.aws.amazon.com/general/latest/gr/ssm.html)
+
+Technical details were checked against AWS documentation on 1 November 2026. Defaults, quotas and Region support change, so confirm them before relying on them.
