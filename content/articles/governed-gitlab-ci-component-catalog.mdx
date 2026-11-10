@@ -1,0 +1,175 @@
+---
+title: "Building a Governed, Self-Evolving GitLab CI/CD Component Catalog"
+date: "2026-11-14"
+excerpt: "How AI agents can discover missing CI/CD components, author reusable templates, validate them, open draft merge requests and consume approved releases without bypassing human governance."
+tags: ["GitLab CI", "CI/CD", "AI", "Platform Engineering"]
+series: "Policy-Driven Agentic DevOps"
+part: 3
+seriesRole: "The workflow: component authoring and governed releases in GitLab."
+---
+
+*Audience: GitLab administrators, DevOps engineers, internal platform teams. Status: Reference implementation blueprint.*
+
+
+<Callout title="Across the series">
+This part turns the design into a GitLab workflow. It builds on the integration flow from [Part 1](/articles/from-ci-templates-to-agentic-devops#the-developers-experience) and the enforcement layers from [Part 2](/articles/guardrails-are-not-security-boundaries#a-layered-control-model).
+</Callout>
+
+## A reusable component library needs a lifecycle
+
+Centralizing GitLab CI/CD components is straightforward until the first missing component appears. An application requires a Python type-checking job; the catalog offers lint and unit tests but nothing for type checking. A developer can paste a new job into the application's `.gitlab-ci.yml`, yet this encourages duplication. An AI agent can author the missing job faster, but who confirms that it is generic, secure, well-tested and ready for the rest of the company?
+
+A **governed component factory** answers that question. The agent may discover a gap, author a component, write tests and open a draft merge request in the central repository. It may not approve its own implementation or release an unreviewed catalog version. The consuming application waits for the published component and pins that release.
+
+The goal is not a catalog that literally modifies itself without oversight. It is a catalog that **evolves through a controlled, agent-assisted contribution loop**.
+
+## Keep product repositories separate from component ownership
+
+A useful GitLab topology is:
+
+```text
+genuka/                           # Root group
+  product-a/                      # Product subgroup
+    product-a-api                 # Application repository
+    product-a-front               # Application repository
+    product-a-notifications       # Independent service repository
+  platform/                       # Platform subgroup
+    ci-components                 # Central catalog and governance
+```
+
+The central project name is illustrative. Its published GitLab components should be housed in the structure expected by the GitLab CI/CD Catalog. Additional folders can contain standards, validators and agent skills without being mistaken for published components.
+
+One maintainability rule is essential: **generic, cross-project behavior belongs centrally; application-specific orchestration remains local**. A production-only database migration tailored to a single application is not automatically a reusable catalog component.
+
+<Callout title="Across the series">
+The product/subgroup split is the topology standard introduced in [Part 1](/articles/from-ci-templates-to-agentic-devops#repository-topology-is-an-explicit-organizational-policy).
+</Callout>
+
+## The component contract
+
+A component should expose inputs rather than assuming the consumer's job names or stages. Here is a small illustrative component stored in `templates/python-type-check.yml` within a GitLab component project:
+
+```yaml
+spec:
+  inputs:
+    job_name:
+      description: "Unique job name"
+      default: "python-type-check"
+    stage:
+      description: "CI stage for type checking"
+      default: "verify"
+    python_image:
+      description: "Python execution image"
+      default: "python:3.12-slim"
+---
+"$[[ inputs.job_name ]]":
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.python_image ]]
+  script:
+    - python -m pip install --disable-pip-version-check mypy
+    - mypy .
+```
+
+This demonstrates the `spec:inputs` contract, not a production-ready supply-chain design. A hardened component should pin its tool versions and execution image appropriately, account for the consumer's dependency manager, and have integration tests across supported stacks. If installing `mypy` at runtime is unsuitable for the organization, replace it with an approved immutable tooling image.
+
+A consumer can reference a published release:
+
+```yaml
+stages: [verify, build, test, release]
+
+include:
+  - component: $CI_SERVER_FQDN/genuka/platform/ci-components/python-type-check@1.3.0
+    inputs:
+      job_name: "type-check-api"
+      stage: verify
+```
+
+GitLab accepts multiple component selectors, including tags and certain floating versions. In a strict governance model, exact released versions—or immutable SHAs where appropriate—are required for production consumers. The organization must decide and validate this rule explicitly.
+
+## How an agent should handle a catalog gap
+
+<CatalogGap />
+
+The agent's component-authoring skill should require a structured proposal: capability, target stacks, inputs, default behavior, failure semantics, required permissions, supported GitLab versions, dependency pinning, tests and documentation.
+
+The component is not considered available merely because its draft MR exists. If the integration depends on it, the consuming project remains in a `WAITING_FOR_COMPONENT` state until the release is published and verified.
+
+## The review process is a product feature
+
+The catalog itself needs a CI pipeline. On a component MR, run at least:
+
+- Syntax and schema validation.
+- Component input-contract tests.
+- Positive and negative integration tests in small fixture projects.
+- Checks for overprivileged jobs and secret handling.
+- Documentation and changelog checks.
+- Compatibility checks against supported GitLab versions and runners.
+
+The agent can draft a notification for a DevOps reviewer, including a link to the MR and the evidence collected. It should not send a WhatsApp message without an explicitly authorized communication integration. Human review must not be reducible to clicking approve without inspecting the actual change.
+
+<Callout title="Across the series">
+Approval is only meaningful with evidence tied to the revision under review. See [Part 2: Compliance is evidence, not confidence](/articles/guardrails-are-not-security-boundaries#compliance-is-evidence-not-confidence).
+</Callout>
+
+After merging, the release workflow creates a semantic-version tag and publishes the component catalog revision. An important design fact is that catalog components in the same GitLab project share its release/version context; consumers should not assume arbitrary independent release numbers for every template unless the repository layout and release system explicitly support that arrangement.
+
+## Evolving the contract safely
+
+A shared component is an API, even if its implementation is YAML. Changes can break consumers by altering input names, job names, stages, defaults, permissions, `rules`, or artifact paths.
+
+Treat changes by compatibility:
+
+| Change | Typical impact | Suggested handling |
+|---|---|---|
+| Documentation or internal test correction | No consumer behavior change | Patch release |
+| New optional input with safe default | Usually backward compatible | Minor release |
+| Required input added | Breaking | Major release |
+| Stage or execution rules changed | Potentially breaking | Review and often major release |
+| Security fix requiring behavior change | Depends on contract | Explicit migration notice |
+
+These are guidelines, not an automatic versioning oracle. Review the effective contract and runtime behavior.
+
+The platform should eventually maintain a component usage inventory: project, included component, pinned version, last validated revision and migration status. That makes it possible to schedule upgrades and retire unsafe releases without blindly changing every pipeline.
+
+## Why the consumer should not copy the template
+
+Directly copying a job into each consumer makes future maintenance expensive. Published includes instead allow the central team to evolve a component deliberately and let projects upgrade under review.
+
+However, central reuse should not erase project-specific needs. A recommended structure for the consumer is:
+
+```yaml
+stages: [verify, build, test, release]
+
+include:
+  - component: $CI_SERVER_FQDN/genuka/platform/ci-components/secret-detection@2.0.0
+  - component: $CI_SERVER_FQDN/genuka/platform/ci-components/python-lint@2.0.0
+
+verify-openapi-schema:
+  stage: verify
+  script:
+    - python scripts/check_openapi_contract.py
+```
+
+The URLs are illustrative; the templates must really exist at those paths and be published at those versions. The consumer's validator must check the *resolved* configuration, not just the literal YAML include list.
+
+<Callout title="Across the series">
+Why resolved configuration matters, and how a check can be imported then neutralized: [Part 2](/articles/guardrails-are-not-security-boundaries#represent-policies-as-testable-contracts).
+</Callout>
+
+## Start with a small catalog
+
+The fastest path to an unmaintainable platform is to build dozens of components and skills before validating a single integration end to end.
+
+A practical first iteration needs just four mandatory capabilities—secret detection, lint, build verification and tests—plus two pilot projects. Add one missing-component exercise to validate the authoring and release loop. Measure the time from request to reviewable MR, configuration defects, component reuse and policy violations caught.
+
+## Conclusion
+
+A component catalog becomes strategically valuable when it provides more than YAML reuse. It must offer contracts, provenance, tests, versioning, ownership and a migration path. Agentic tooling can accelerate component development and integration, but release authority should remain with a governed, verifiable workflow.
+
+**Let the agent contribute to the platform. Do not make the agent the platform's release authority.**
+
+### Further reading
+
+- GitLab CI/CD Components: https://docs.gitlab.com/ci/components/
+- GitLab CI/CD Inputs: https://docs.gitlab.com/ci/inputs/
+- GitLab Component Development Guide: https://docs.gitlab.com/development/cicd/components/

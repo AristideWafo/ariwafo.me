@@ -8,7 +8,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeShiki from "@shikijs/rehype";
 import { normalizeTags } from "@/lib/tags";
 import { readingMinutes } from "./reading-time";
-import { mdxComponents } from "@/components/articles/mdx";
+import { mdxComponents, upcomingAwareLink } from "@/components/articles/mdx";
 
 const DIR = path.join(process.cwd(), "content/articles");
 
@@ -19,6 +19,11 @@ export interface NativeArticle {
   date: string;
   tags: string[];
   repo?: string;
+  /** Series name and 1-based position, set together on multi-part articles. */
+  series?: string;
+  part?: number;
+  /** One line on what this part contributes to the series. */
+  seriesRole?: string;
   draft: boolean;
   readingTime: number;
   /** Stable 1-based position by date, drafts included so publishing never renumbers. */
@@ -47,27 +52,46 @@ async function readAll() {
             date: new Date(data.date).toISOString().slice(0, 10),
             tags: normalizeTags(data.tags ?? []),
             repo: data.repo as string | undefined,
+            series: data.series as string | undefined,
+            part: data.part as number | undefined,
+            seriesRole: data.seriesRole as string | undefined,
             draft: data.draft === true,
             readingTime: readingMinutes(content),
           },
         };
       })
   );
-  parsed.sort((a, b) => a.meta.date.localeCompare(b.meta.date));
-  const visible = process.env.NODE_ENV !== "production";
-  return parsed
-    .map((p, i) => ({ ...p, meta: { ...p.meta, doc: i + 1 } }))
-    .filter((p) => visible || !p.meta.draft);
+  // Same-day series parts keep their reading order.
+  parsed.sort((a, b) => a.meta.date.localeCompare(b.meta.date) || (a.meta.part ?? 0) - (b.meta.part ?? 0));
+  return parsed.map((p, i) => ({ ...p, meta: { ...p.meta, doc: i + 1 } }));
 }
 
-/** Metadata of native articles, newest first. Drafts only outside production. */
+/**
+ * Production hides drafts and future-dated articles; a future date is a
+ * scheduled publication that appears on the first build on or after that day.
+ */
+const isShown = (a: NativeArticle) =>
+  process.env.NODE_ENV !== "production" ||
+  (!a.draft && a.date <= new Date().toISOString().slice(0, 10));
+
+/** Metadata of visible native articles, newest first. */
 export async function getNativeArticles(): Promise<NativeArticle[]> {
-  return (await readAll()).map((p) => p.meta).reverse();
+  return (await readAll()).map((p) => p.meta).filter(isShown).reverse();
 }
 
 export async function getNativeArticle(id: string) {
-  const found = (await readAll()).find((p) => p.meta.id === id);
+  const all = await readAll();
+  const found = all.find((p) => p.meta.id === id && isShown(p.meta));
   if (!found) return null;
+
+  // Every part of the series, hidden ones flagged so the page can say "coming".
+  const series = found.meta.series
+    ? all
+        .filter((p) => p.meta.series === found.meta.series)
+        .map((p) => ({ ...p.meta, upcoming: !isShown(p.meta) }))
+        .sort((a, b) => (a.part ?? 0) - (b.part ?? 0))
+    : [];
+  const upcoming = new Map(all.filter((p) => !isShown(p.meta)).map((p) => [p.meta.id, p.meta.date]));
 
   const headings: Heading[] = [];
   // Runs after rehype-slug, so headings already carry their ids.
@@ -86,7 +110,7 @@ export async function getNativeArticle(id: string) {
 
   const { content } = await compileMDX({
     source: found.content,
-    components: mdxComponents,
+    components: { ...mdxComponents, a: upcomingAwareLink(upcoming) },
     options: {
       mdxOptions: {
         remarkPlugins: [remarkGfm],
@@ -98,7 +122,7 @@ export async function getNativeArticle(id: string) {
       },
     },
   });
-  return { meta: found.meta, content, headings };
+  return { meta: found.meta, content, headings, series };
 }
 
 interface HastNode {

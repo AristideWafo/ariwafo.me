@@ -196,3 +196,122 @@ export function DnsFailoverFlow() {
     </Figure>
   );
 }
+
+export function AgenticFlow() {
+  return (
+    <Figure title="The agent proposes, independent controls decide" w={900} h={730}>
+      <Box x={30} y={20} w={240} h={56} title="Versioned policies" sub={["standards and rules"]} />
+      <Box x={330} y={20} w={240} h={56} title="Developer opens project" />
+      <Box x={630} y={20} w={240} h={56} title="Published CI components" sub={["GitLab catalog"]} />
+      <Line d="M150 76V148H328" />
+      <Line d="M750 76V148H572" />
+      <Line d="M450 76V118" />
+      <Box x={330} y={120} w={240} h={56} title="AI agent" sub={["loads a pinned revision"]} />
+      <Line d="M450 176V208" />
+      <Box x={330} y={210} w={240} h={56} title="Inspect project" sub={["read-only, then plan"]} />
+      <Line d="M450 266V298" />
+      <Box x={330} y={300} w={240} h={56} title="Deterministic validators" sub={["outside the model"]} soft />
+      <Line d="M450 356V388" />
+      <Box x={360} y={390} w={180} h={48} title="Conformant?" soft />
+      <Line d="M540 414H628" label="No" lx={584} ly={406} anchor="middle" />
+      <Box x={630} y={386} w={240} h={56} title="Block and remediate" sub={["dependent work stops"]} />
+      <Line d="M750 386V328H572" dashed label="re-validate" lx={762} ly={360} />
+      <Line d="M450 438V478" label="Yes" lx={462} ly={462} />
+      <Box x={330} y={480} w={240} h={56} title="Implement on branch" sub={["never on main"]} />
+      <Line d="M450 536V568" />
+      <Box x={330} y={570} w={240} h={56} title="GitLab CI + MR approval" sub={["server-side"]} soft />
+      <Line d="M450 626V658" hl />
+      <Box x={330} y={660} w={240} h={56} title="Human-controlled merge" hl />
+      <rect x={30} y={640} width={14} height={14} fill={C.card} stroke={C.line} />
+      <text x={52} y={651} fontSize="11" fill={C.sub}>agent work</text>
+      <rect x={30} y={664} width={14} height={14} fill={C.soft} stroke={C.line} />
+      <text x={52} y={675} fontSize="11" fill={C.sub}>independent control</text>
+    </Figure>
+  );
+}
+
+const Bracket = ({ y1, y2, title, sub }: { y1: number; y2: number; title: string; sub: string }) => (
+  <g>
+    <path d={`M296 ${y1}H290V${y2}H296`} fill="none" stroke={C.line} strokeWidth="1.5" />
+    <text x={278} y={(y1 + y2) / 2 - 2} textAnchor="end" fontSize="12" fontWeight="600" fill={C.text}>{title}</text>
+    <text x={278} y={(y1 + y2) / 2 + 16} textAnchor="end" fontSize="11" fill={C.sub}>{sub}</text>
+  </g>
+);
+
+export function ControlLayers() {
+  const steps: [string, string[]?, boolean?][] = [
+    ["Agent wants to act"], ["Local action hook"], ["Worktree mutation"], ["Local validators"],
+    ["Feature branch + MR"], ["Server CI + approval rules"], ["Authorized human merge", [], true],
+  ];
+  return (
+    <Figure title="Each layer can stop the change; only the server layer is a boundary" w={900} h={630}>
+      {steps.map(([t, sub, hl], i) => (
+        <Box key={t} x={320} y={20 + i * 90} w={260} h={56} title={t} sub={sub} hl={hl} />
+      ))}
+      {steps.slice(1).map((_, i) => (
+        <Line key={i} d={`M450 ${76 + i * 90}V${108 + i * 90}`} hl={i === 5}
+          label={[, "allowed", , "pass", , "pass"][i]} lx={462} ly={96 + i * 90} />
+      ))}
+      <Box x={680} y={290} w={190} h={56} title="Stop and explain" />
+      <Line d="M580 138H775V288" label="denied" lx={600} ly={130} />
+      <Line d="M580 318H678" label="failure" lx={600} ly={310} />
+      <Line d="M580 498H775V348" label="failure" lx={600} ly={490} />
+      <Bracket y1={110} y2={346} title="LOCAL · guardrails" sub="agent environment" />
+      <Bracket y1={380} y2={616} title="GITLAB · boundary" sub="server-side, survives bypass" />
+    </Figure>
+  );
+}
+
+export function WorkflowStates() {
+  const states: [string, string[]?][] = [
+    ["Discovery", ["read-only inspection"]], ["Audit"], ["Plan"], ["Await approval", ["plan-scoped consent"]],
+    ["Integrate"], ["Validate"], ["MR ready", ["evidence attached"]],
+  ];
+  const labels = [, "gates pass", , "approved", , "all checks pass"];
+  return (
+    <Figure title="Integration as a state machine, not “work until done”" w={900} h={570}>
+      {states.map(([t, sub], i) => (
+        <Box key={t} x={340} y={20 + i * 80} w={220} h={48} title={t} sub={sub} hl={i === 6} />
+      ))}
+      {labels.map((l, i) => (
+        <Line key={i} d={`M450 ${68 + i * 80}V${98 + i * 80}`} label={l} lx={462} ly={88 + i * 80} />
+      ))}
+      <Box x={680} y={100} w={180} h={48} title="Blocked" />
+      <Line d="M560 114H678" label="gate failed" lx={619} ly={108} anchor="middle" />
+      <Line d="M680 134H562" label="remediated" lx={619} ly={148} anchor="middle" />
+      <Line d="M340 284H290V204H338" dashed label="revision requested" lx={280} ly={248} anchor="end" />
+      <Line d="M560 444H610V364H562" dashed label="fix required" lx={620} ly={408} />
+    </Figure>
+  );
+}
+
+export function CatalogGap() {
+  return (
+    <Figure title="Handling a catalog gap without bypassing review" w={900} h={650}>
+      <Box x={30} y={20} w={250} h={56} title="Consumer needs a capability" />
+      <Line d="M155 76V118" />
+      <Box x={30} y={120} w={250} h={56} title="Published component exists?" soft />
+      <Line d="M280 148H328" label="No" lx={304} ly={140} anchor="middle" />
+      <Box x={330} y={120} w={220} h={56} title="Reusable across projects?" soft />
+      <Line d="M550 148H608" label="Yes" lx={579} ly={140} anchor="middle" />
+      <Line d="M440 176V208" label="No" lx={452} ly={196} />
+      <Box x={330} y={210} w={220} h={56} title="Project-specific job" sub={["stays in the app repo"]} />
+      {[
+        ["Author component", "catalog feature branch"],
+        ["Contract + integration tests", "fixture projects"],
+        ["Draft MR in catalog", "agent stops here"],
+        ["DevOps review + approval", "human"],
+      ].map(([t, s], i) => (
+        <g key={t}>
+          <Box x={610} y={120 + i * 90} w={260} h={56} title={t} sub={[s]} />
+          <Line d={`M740 ${176 + i * 90}V${208 + i * 90}`} />
+        </g>
+      ))}
+      <Box x={610} y={480} w={260} h={56} title="Publish catalog release" sub={["semantic version tag"]} hl />
+      <Line d="M155 176V568" label="Yes: pin approved release" lx={167} ly={360} />
+      <Line d="M440 266V568" />
+      <Line d="M740 536V568" hl label="consumer waits, then pins" lx={728} ly={556} anchor="end" />
+      <Box x={30} y={570} w={840} h={60} title="Validate consumer CI and open MR" sub={["catalog includes pinned to exact released versions"]} hl />
+    </Figure>
+  );
+}

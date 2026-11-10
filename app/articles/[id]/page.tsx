@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { TagList } from "@/components/ui/TagList";
 import { RepoCard } from "@/components/articles/RepoCard";
+import { SeriesMap, SeriesPager } from "@/components/articles/Series";
 import { formatDate } from "@/lib/content/articles/data";
 import { getNativeArticle, getNativeArticles } from "@/lib/content/articles/native";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -14,7 +15,7 @@ interface ArticlePageProps {
 }
 
 export async function generateStaticParams() {
-  return (await getNativeArticles()).filter((a) => !a.draft).map((a) => ({ id: a.id }));
+  return (await getNativeArticles()).map((a) => ({ id: a.id }));
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
@@ -35,7 +36,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { id } = await params;
   const article = await getNativeArticle(id);
   if (!article) notFound();
-  const { meta, content, headings } = article;
+  const { meta, content, headings, series } = article;
 
   return (
     <article className="py-14 md:py-20">
@@ -56,11 +57,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <TagList tags={meta.tags} basePath="/articles" />
         </header>
 
+        {series.length > 1 && <SeriesMap parts={series} current={meta.id} />}
+
         <hr className="my-10 border-border" />
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="prose prose-neutral max-w-3xl dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-primary prose-code:font-mono prose-pre:border prose-pre:border-border prose-pre:bg-surface prose-pre:text-sm prose-pre:rounded-none prose-table:text-sm prose-th:text-left prose-th:font-mono prose-th:text-xs prose-th:uppercase prose-th:tracking-wide prose-table:border prose-table:border-border prose-th:border prose-th:border-border prose-td:border prose-td:border-border prose-th:px-4 prose-th:py-3 prose-td:px-4 prose-td:py-3 prose-td:align-top prose-td:leading-normal [&_td]:min-w-[8rem][&_table]:block [&_table]:overflow-x-auto">
             {content}
+            {series.length > 1 && <SeriesPager parts={series} current={meta.id} />}
           </div>
 
           <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
