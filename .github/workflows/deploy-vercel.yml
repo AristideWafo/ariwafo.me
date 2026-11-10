@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+  # Daily rebuild publishes articles whose front-matter date has arrived.
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
 
 jobs:
   deploy:

@@ -15,7 +15,7 @@ export function Callout({
   return (
     <aside className={cn("not-prose my-6 border border-l-4 bg-surface/50 p-4", t.box)}>
       <p className={cn("label", t.text)}>{title ?? t.label}</p>
-      <div className="mt-2 space-y-2 leading-relaxed [&_code]:font-mono [&_code]:text-[0.9em]">{children}</div>
+      <div className="mt-2 space-y-2 leading-relaxed [&_code]:font-mono [&_code]:text-[0.9em] [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2">{children}</div>
     </aside>
   );
 }

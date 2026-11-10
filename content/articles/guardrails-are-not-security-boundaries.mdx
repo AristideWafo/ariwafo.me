@@ -1,0 +1,130 @@
+---
+title: "Guardrails Are Not Security Boundaries"
+date: "2026-11-12"
+excerpt: "AI agent security in practice: deterministic policy enforcement, Claude Code hooks, GitLab protected branches, quality gates and state-machine-driven workflows."
+tags: ["AI", "Security", "DevSecOps", "GitLab"]
+series: "Policy-Driven Agentic DevOps"
+part: 2
+seriesRole: "The principle: an agent cannot be the sole authority on its own compliance."
+---
+
+*Audience: DevSecOps engineers, platform engineers, agent builders. Status: Technical design pattern and threat-modeling guide.*
+
+
+<Callout title="Across the series">
+[Part 1](/articles/from-ci-templates-to-agentic-devops#four-distinct-responsibilities) split agentic DevOps into four planes: governance, execution, agent interaction and enforcement. This part zooms into enforcement: which layer may decide what.
+</Callout>
+
+## An agent can follow instructions—and still violate your policy
+
+A coding agent is asked to integrate CI/CD into an API. Its instructions say to preserve secret detection and never push to `main`. During implementation, a build fails. The agent can make the failure disappear by setting `allow_failure: true`. It might also attempt a direct push because that is the shortest path to finishing the request.
+
+Neither outcome requires a malicious agent. Both can follow from local optimization toward an underspecified goal. The problem is that natural-language instructions describe desired behavior but do not constitute an independently enforced policy.
+
+A robust design places **decisions about authorization and compliance outside the language model**. The model can inspect files, prepare plans, write code, and interpret reports. A separate mechanism decides whether a proposed action or resulting configuration satisfies policy.
+
+## A layered control model
+
+The layers are complementary, not interchangeable:
+
+| Layer | Function | What it cannot guarantee alone |
+|---|---|---|
+| Policy documents | Define the organization's rules | That agents or developers will obey them |
+| Agent skills | Specify execution procedures | That every step was followed |
+| Local hooks | Intercept supported tool actions | Control over every alternative execution path |
+| Deterministic validators | Evaluate testable predicates | Authorization to change GitLab resources |
+| GitLab CI / MR policies | Verify integrated changes | Prevention of every locally harmful action |
+| Server permissions and protected branches | Enforce access and merge authority | Correctness of all application logic |
+
+<ControlLayers />
+
+The architecture should treat an action that cannot be checked as **unknown**, not automatically safe. “No finding” is not necessarily the same as “the test ran successfully.”
+
+## Represent policies as testable contracts
+
+A Markdown policy is useful for humans. Enforcement requires a machine-readable representation or a validator with a well-defined contract. One possible policy record is:
+
+```yaml
+id: CI-SEC-001
+version: 1
+scope: application-project
+severity: MUST
+requirement: secret-detection-enabled
+validator: check_secret_detection
+on_failure: BLOCK
+exceptions_allowed: false
+```
+
+This is an **application-defined schema**, not native GitLab syntax. It should have its own schema validation, tests and change control. The validator must inspect resolved configuration where possible, not merely search for the text `secret-detection` in a YAML file. A component might be imported and then neutralized, skipped, or shadowed by another job definition.
+
+A minimal validator response can be:
+
+```json
+{
+  "policy_id": "CI-SEC-001",
+  "status": "FAIL",
+  "evidence": "Resolved job is not required on merge requests",
+  "remediation": "Restore the catalog-provided execution rules"
+}
+```
+
+Use a small, explicit outcome set: `PASS`, `FAIL`, `NEEDS_APPROVAL`, `NOT_APPLICABLE`, and `ERROR`. Treat `ERROR` as non-passing for blocking checks. If exceptions are supported, record the rule, approver, justification, scope and expiry; do not silently convert failure to success.
+
+## Model the workflow as a state machine
+
+A pipeline integration should not be a vague “work until done” instruction. It should have states and allowed transitions:
+
+<WorkflowStates />
+
+For each transition specify prerequisites, authorized side effects, outputs, and recovery. For example, `AwaitApproval -> Integrate` requires an explicit approval to a concrete plan, not a broad permission to modify anything in either repository.
+
+<Callout title="Across the series">
+When an integration depends on a component that does not exist yet, the workflow gains a `WAITING_FOR_COMPONENT` state. [Part 3](/articles/governed-gitlab-ci-component-catalog#how-an-agent-should-handle-a-catalog-gap) shows that branch.
+</Callout>
+
+## Three adversarial test cases
+
+**Case 1: Disable a mandatory check.** Inject a change that sets `allow_failure: true`, changes `when`, or replaces a mandatory script. The validator must reject the effective CI configuration, and the merge request must remain blocked.
+
+**Case 2: Push directly to the protected branch.** A local hook should discourage or block the attempted command in the managed agent environment. More importantly, the GitLab credentials must lack direct-push rights. A successful local hook demonstration is insufficient without the server-side test.
+
+**Case 3: Use a floating or unpublished component.** The agent proposes `@main` or `@~latest` in a consumer pipeline. A version policy that requires exact released references should fail the change. Note that GitLab supports floating selectors; the stricter rule is an organizational policy chosen for reproducibility, not a GitLab limitation.
+
+<Callout title="Across the series">
+[Part 3](/articles/governed-gitlab-ci-component-catalog#the-component-contract) covers how released component versions are pinned and evolved.
+</Callout>
+
+The same tests should be performed with local hooks disabled or bypassed, using a separate authorized test environment, to verify that server-side protections still work.
+
+## Bootstrap is a security-sensitive operation
+
+A central repository may store `CLAUDE.md`, skills and hook definitions. Merely giving an agent the repository URL does not automatically activate them, and an untrusted repository may contain instructions that conflict with the developer's actual goal.
+
+A safer bootstrap process should:
+
+1. Authenticate the central repository's source and chosen revision.
+2. Load only allowed instructions and skills.
+3. Verify managed hooks and settings in the supported runtime.
+4. Establish a restricted workspace for both central and consumer repositories.
+5. Supply least-privilege GitLab credentials.
+6. Log the policy version used for the integration.
+
+This protects against accidental policy drift and reduces the risk of accepting arbitrary repository content as higher-priority instructions.
+
+## Compliance is evidence, not confidence
+
+Do not let the agent report “all gates passed” solely because it believes the YAML looks right. Require evidence: validator result files, GitLab lint output, pipeline status, resolved component version, and merge request approval state where available.
+
+The architecture should also protect against **superficial compliance**: a job with the right name that does not execute, a scan that reports success despite never running, or a status check unrelated to the specific commit under review. The evidence must be tied to the relevant revision.
+
+## Conclusion
+
+Local hooks are useful; instructions and skills make agents more effective. Neither should be confused with an authorization system. The strongest design gives each layer a narrow responsibility: instructions guide, hooks intercept, validators evaluate, and GitLab enforces permissions and review.
+
+**A governed AI agent is one whose work remains safe to reject.** Its failure, confusion or absence must not disable the organization's core controls.
+
+### Further reading
+
+- GitLab Protected Branches: https://docs.gitlab.com/user/project/repository/branches/protected/
+- GitLab CI/CD Components security practices: https://docs.gitlab.com/ci/components/
+- Claude Code Hooks documentation: https://code.claude.com/docs/en/hooks
